@@ -1,0 +1,668 @@
+\documentclass[12pt,spanish,mexico]{article}
+\usepackage[utf8]{inputenc}
+\PassOptionsToPackage{hyphens}{url}\usepackage{hyperref}
+\usepackage[es-nodecimaldot]{babel} % nombre de opción corregido
+\usepackage{amsthm, amssymb, amsmath, amsfonts, bbm, mathtools}
+\usepackage{csquotes}
+\usepackage{enumerate}
+\usepackage[shortlabels]{enumitem}
+\usepackage{titling}
+\usepackage{blindtext}
+\usepackage{lmodern} 
+\usepackage{float}
+\usepackage{mathrsfs}
+\usepackage[capitalise]{cleveref}
+\usepackage{caption} 
+\usepackage{graphicx}
+\usepackage{chngcntr}
+\counterwithin{figure}{section}
+\numberwithin{equation}{section}
+\usepackage[vmargin=1in, hmargin=0.5in]{geometry}  
+
+\setlength{\topmargin}{-50pt}
+\setlength{\headheight}{38.23112pt}
+\setlength{\headsep}{24pt}
+
+\makeatletter
+\def\iftitle{\ifx\thetitle \empty \else }
+\def\safetitle{\iftitle{\thetitle}\fi}
+\def\headertitle{%
+    \ifdefined\hw{\hw}\fi%
+    \ifdefined\hw \iftitle{ -- }\fi%
+    \safetitle%
+}
+\def\@maketitle{%
+  \begin{center}%
+Tarea 1 - Problemas inversos - 11/02/2026 \\
+Muñoz Macías Christian Jaime 
+    \vskip 1em%
+    \hrule
+  \end{center}%
+  \par
+  \vskip 1.5em%
+}
+\makeatother
+\usepackage{amsmath}
+\usepackage{tikz}
+
+\newcommand\RADot{%
+  \mathord{%
+    \mspace{1mu}%
+    \text{\radot}%
+    \mspace{1mu}%
+  }%
+}
+
+\newcommand\radot{%
+    \tikz[line cap=round,x=1ex,y=1ex,line width=0.3pt]
+    {\draw (0,1) |- (1,0) (0.55,0) arc(0:90:0.55); \fill (0.23,0.23) circle (0.05);}%
+}
+
+%% encabezado personalizado
+\usepackage{fancyhdr}
+%% estilo plain personalizado
+\fancypagestyle{plain}{%
+    \fancyhf{} % limpia encabezado y pie de página
+    \renewcommand{\headrulewidth}{0pt}
+    \setlength{\headheight}{0pt}
+    \fancyfoot[R]{\thepage}
+}
+%% estilo para todas las páginas
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[C]{Maestría en Matemáticas Aplicadas}
+\fancyfoot[R]{\thepage}
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+%% DEFINICIONES ÚTILES %%
+%%%%%%%%%%%%%%%%%%%%%%%%
+%% definiciones matemáticas
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\Ha}{\mathcal{H}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\PP}{\mathbb{P}}
+
+\newtheorem{proposition}{Proposición}
+\newtheorem{theorem}{Teorema}
+\newtheorem{lemma}{Lema}
+\newtheorem{corollary}{Corolario}
+
+\theoremstyle{definition}
+\newtheorem{problem}{Problema}
+\newtheorem{definition}{Definición}[section]
+\newtheorem*{example}{Ejemplo}
+
+\theoremstyle{remark}
+\newtheorem*{observation}{Observación}
+\newtheorem*{note}{Nota}
+
+\newenvironment{solution}{\begin{proof}[Solución]}{\end{proof}}
+\newenvironment{dem}{\begin{proof}[Demostración]}{\end{proof}}
+\renewcommand{\qedsymbol}{$\blacksquare$}
+
+%% comandos útiles
+\newcommand{\eps}{\varepsilon}
+\newcommand{\To}{\longrightarrow}
+\newcommand{\Eu}{\varPhi}
+\newcommand{\Mapsto}{\longmapsto}
+
+%% delimitadores emparejados
+\DeclarePairedDelimiter{\set}{\{}{\}}
+\DeclarePairedDelimiter{\floor}\lfloor\rfloor
+\DeclarePairedDelimiter{\ceil}\lceil\rceil
+\DeclarePairedDelimiter{\abs}\lvert\rvert
+\DeclarePairedDelimiter{\gen}\langle\rangle
+\DeclareMathOperator{\sgn}{sgn}
+\DeclareMathOperator{\ord}{ord}
+
+%% operador
+\newcommand{\op}[1]{\operatorname{#1}}
+
+%% etiquetas del documento
+\title{Tarea 1 - Problemas inversos - 11/02/2026}
+\def\course{Materia}
+\def\university{CIMAT - MsC. Maestría en matemáticas aplicadas}
+\author{Muñoz Macías Christian Jaime}
+\def\email{\url{christian.munoz@cimat.mx}}
+\date{\today}
+
+%% permitir saltos de línea en ecuaciones
+\allowdisplaybreaks[4]
+
+%%%%%%%%%%% INICIO DEL DOCUMENTO %%%%%%%%%%% 
+
+\begin{document}
+\maketitle
+
+\textbf{1. Deconvolución.} Considera el problema de deconvolución presentado en la sección 1.1 del libro de Vogel
+
+\[
+g(x) = \int_{0}^{1} k(x - x') f(x') dx' \stackrel{\text{def}}{=} (Kf)(x), \quad 0 < x < 1 \quad (1)
+\]
+
+con núcleo Gaussiano
+
+\[
+k(x) = C \exp(-x^2/2\gamma^2)
+\]
+
+donde \(\gamma = 0.025\) y \(C = 1/\sqrt{\gamma^2 2\pi}\). Consideremos además la función
+
+\[
+f_{\text{true}}(x) = 
+\begin{cases} 
+0.75, & 0.1 < x < 0.25 \\
+0.25, & 0.3 < x < 0.32 \\
+\sin^4(2\pi x), & 0.5 < x < 1 \\
+0, & \text{en otro caso}
+\end{cases}
+\]
+
+Realiza la discretización del problema de deconvolución de acuerdo al libro de Vogel.
+
+El problema inverso consiste en estimar \( f_{\text{true}} (x) \) dadas observaciones ruidosas de \( g \).
+
+\begin{solution}
+
+Sea $n \in \mathbb{N}$ y considera una partición uniforme del intervalo $(0,1)$ dada por
+
+\[
+x_j = \frac{j}{n}, \quad j=1,\dots,n,
+\]
+
+con paso de malla
+
+\[
+h = \frac{1}{n}.
+\]
+
+Aproximamos la integral en (1) mediante una suma de Riemann:
+
+\[
+g(x_i)
+\approx
+\sum_{j=1}^{n}
+k(x_i - x_j)\, f(x_j)\, h,
+\quad i=1,\dots,n.
+\]
+
+Definimos los vectores discretos
+
+\[
+f_j = f(x_j), \quad g_i = g(x_i),
+\]
+
+y la matriz
+
+\[
+K_{ij} = h\, k(x_i - x_j),
+\quad i,j=1,\dots,n.
+\]
+
+el problema integral continuo se aproxima por el sistema lineal
+
+\[
+g = K f,
+\]
+
+donde $K \in \mathbb{R}^{n \times n}$ representa la discretización del operador integral $K$.
+
+La función verdadera se discretiza como
+
+\[
+f_{\text{true},j}
+=
+f_{\text{true}}(x_j),
+\quad j=1,\dots,n,
+\]
+
+y los datos se obtienen por
+
+\[
+g = K f_{\text{true}}.
+\]
+
+
+\end{solution}
+
+\begin{enumerate}[label=(\alph*)]
+    \item Lee la subsección 1.2.1 del libro y responde los ejercicios 1.5 y 1.6.
+    \begin{enumerate}
+        \item \textbf{Ejercicio 1.5.} Verifica que la ecuación (1.21) se satisface tanto para la función de filtro TSVD (1.11) como para la función de filtro de Tikhonov (1.13).
+        \begin{equation}
+        w_\alpha(s^2)s^{-1} \leq \alpha^{-1/2}
+        \tag{1.21}
+        \end{equation}
+        \begin{equation}
+        w_\alpha(s^2)=\begin{cases}
+            1 & \text{si } s^2 > \alpha,\\
+            0 & \text{si } s^2 \leq \alpha.
+        \end{cases}
+        \tag{1.11}
+        \end{equation}
+        \begin{equation}
+            w_\alpha(s^2) =\frac{s^2}{s^2+\alpha}.
+            \tag{1.13}
+        \end{equation}
+        \begin{solution}
+            Para la función de filtro TSVD, si $(s^2 > \alpha)$ entonces
+            $$w_\alpha(s^2)=1$$
+            aplicando $s^{-1}$ en los dos lados de la ecuación anterior, obtenemos
+            $$w_\alpha(s^2)s^{-1} =1 s^{-1}$$
+            si $s^2 > \alpha$, entonces $s> \sqrt{\alpha}$ y por lo tanto $s^{-1} < \alpha^{-1/2}$, lo que implica que
+            $$w_\alpha(s^2)s^{-1}< \alpha^{-1/2}$$
+            lo que cumple la desigualdad (1.21).
+            ahora si $s^2 < \alpha$ la función de filtro TSVD es
+            $$w_\alpha(s^2)=0$$
+            aplicando $s^{-1}$ en los dos lados de la ecuación anterior, obtenemos
+            $$w_\alpha(s^2)s^{-1} =0 s^{-1}=0$$
+            entonces $0<\alpha^{-1/2}$, esto cumple la desigualdad (1.21), por lo tanto la función de filtro TSVD cumple
+            la desigualdad (1.21).\\
+            Para la funcion de filtro de Tikhonov, tenemos que multiplicar ambos lados de la función  por $s^{-1}$.
+            \begin{align*}
+            w_\alpha(s^2)s^{-1} &=\frac{s^2}{s^2+\alpha}s^{-1}\\
+            &=\frac{s}{s^2+\alpha}\\
+            \frac{s}{s^2+\alpha} &\leq \alpha^{-1/2} \\
+            s &\leq \alpha^{-1/2}(s^2+\alpha) \\
+            0 &\leq \alpha^{-1/2}(s^2+\alpha)-s\\
+            0 &\leq \alpha^{-1/2}s^2-s+\alpha^{1/2}\\
+            0 &\leq s^2-\alpha^{1/2}s+\alpha\\
+            0 &\leq s^2-\alpha^{1/2}s+\alpha+\frac{\alpha}{4}-\frac{\alpha}{4}\\
+            0 &\leq \left(s^2-\frac{\alpha^{1/2}}{2}\right)^2+\frac{3 \alpha}{4}
+            \end{align*}
+            la última desigualdad es verdadera para todo $s$  por lo tanto cumple la desigualdad (1.21).
+        \end{solution}
+        \item \textbf{Ejercicio 1.6.} Usando (1.18) y (1.5), muestra que la ecuación (1.22) se cumple.
+        \begin{equation}
+            \begin{aligned}
+                e_\alpha^{\text{ruido}} &= R_\alpha \eta\\
+                &=\sum_{i=1}^{n}w_\alpha(s_i^2)s_i^{-1}(u_i^T \eta)v_i.
+            \end{aligned}
+            \tag{1.18}
+        \end{equation}
+        \begin{equation}
+            \delta = \|\eta\|>0
+            \tag{1.5}
+        \end{equation}
+        \begin{equation}
+            \|e_\alpha^{\text{ruido}}\| \leq \alpha^{-1/2} \delta
+            \tag{1.22}
+        \end{equation}
+        \begin{solution}
+        De (1.18),
+
+\[
+e_\alpha^{\text{ruido}}
+=
+\sum_{i=1}^{n}
+w_\alpha(s_i^2)s_i^{-1}(u_i^T \eta)v_i.
+\]
+
+Como $\{v_i\}$ es un sistema ortonormal,
+
+\begin{align*}
+\|e_\alpha^{\text{ruido}}\|^2
+&=\left\langle \sum_{i=1}^{n}
+w_\alpha(s_i^2)s_i^{-1}(u_i^T \eta)v_i,\sum_{i=1}^{n}
+w_\alpha(s_i^2)s_i^{-1}(u_i^T \eta)v_i \right\rangle\\
+&=\sum_{i=1}^{n}\left(w_\alpha(s_i^2)s_i^{-1}\right)^2 (u_i^T \eta)^2.
+\end{align*}
+
+Por el Ejercicio 1.5,
+
+\[
+\left|
+w_\alpha(s_i^2)s_i^{-1}
+\right|
+\le
+\alpha^{-1/2}.
+\]
+
+Por lo tanto,
+
+\[
+\|e_\alpha^{\text{ruido}}\|^2
+\le
+\alpha^{-1}
+\sum_{i=1}^{n}
+(u_i^T \eta)^2.
+\]
+
+Como $\{u_i\}$ también es ortonormal,
+
+\[
+\sum_{i=1}^{n}
+(u_i^T \eta)^2
+=
+\|\eta\|^2.
+\]
+
+Usando (1.5),
+
+\[
+\|\eta\| = \delta,
+\]
+
+Se obtiene
+
+\[
+\|e_\alpha^{\text{ruido}}\|^2
+\le
+\alpha^{-1}\delta^2.
+\]
+
+Aplicando raíz cuadrada,
+
+\[
+\|e_\alpha^{\text{ruido}}\|
+\le
+\alpha^{-1/2}\delta.
+\]
+
+Esto prueba (1.22).
+        \end{solution}
+    \end{enumerate}
+    
+    \item Lee la subsección 1.2.2 del libro y responde los ejercicios 1.7, 1.8 y 1.9.
+    \begin{enumerate}
+        \item \textbf{Ejercicio 1.7.} Confirma la desigualdad (1.26).
+        \begin{equation}
+            \begin{aligned}
+                \|e_\alpha^{\text{trunc}}\|^2&=\sum_{i=1}^{n}(w_\alpha(s_i^2)-1)^2s_i^2|z^{T}u_i|^2 \\
+                &\leq \max_{1 \leq i \leq n}(w_\alpha(s_i^2)-1)^2 s_i^2 \|z\|^2 \\
+                &\leq \alpha \|z\|^2
+            \end{aligned}
+            \tag{1.26}
+        \end{equation}
+        \begin{solution}
+        
+En la base ortonormal $\{u_i\}$,
+
+\[
+\|e_\alpha^{\text{trunc}}\|^2
+=
+\sum_{i=1}^{n}
+(w_\alpha(s_i^2)-1)^2
+s_i^2
+|z^{T}u_i|^2.
+\]
+
+Sea
+
+\[
+\beta
+=
+\max_{1\le i\le n}
+(w_\alpha(s_i^2)-1)^2 s_i^2.
+\]
+
+Entonces cada término de la suma está acotado por $\beta|z^T u_i|^2$, y por lo tanto
+
+\[
+\|e_\alpha^{\text{trunc}}\|^2
+\le
+\beta
+\sum_{i=1}^{n}
+|z^{T}u_i|^2.
+\]
+
+Como $\{u_i\}$ es una base ortonormal,
+
+\[
+\sum_{i=1}^{n}
+|z^{T}u_i|^2
+=
+\|z\|^2.
+\]
+
+Por consiguiente,
+
+\[
+\|e_\alpha^{\text{trunc}}\|^2
+\le
+\max_{1\le i\le n}
+(w_\alpha(s_i^2)-1)^2 s_i^2
+\|z\|^2.
+\]
+
+Ahora verificamos que para filtros regulares TSVD se cumple
+
+\[
+(w_\alpha(s^2)-1)^2 s^2 \le \alpha
+\quad \text{para todo } s.
+\]
+
+
+Si $s^2>\alpha$, entonces $w_\alpha(s^2)=1$ y
+
+\[
+(1-1)^2 s^2 = 0 \le \alpha.
+\]
+
+Si $s^2\le\alpha$, entonces $w_\alpha(s^2)=0$ y
+
+\[
+(0-1)^2 s^2 = s^2 \le \alpha.
+\]
+
+Por lo tanto, la desigualdad se cumple para todo $s$ en el caso TSVD.
+
+Concluimos que
+
+\[
+(w_\alpha(s^2)-1)^2 s^2 \le \alpha
+\quad \text{para todo } s
+\]
+
+tanto para TSVD.
+Por lo tanto
+
+\[
+\|e_\alpha^{\text{trunc}}\|^2
+\le
+\alpha \|z\|^2.
+\]
+
+Esto confirma (1.26).
+
+        \end{solution}
+        \item \textbf{Ejercicio 1.8.} Muestra que la desigualdad (1.26) es óptima (sharp). Para esto, proporciona el vector \(z\) para el cual se alcanza la igualdad.
+\begin{solution}
+
+Sea
+
+\[
+\beta^*
+=
+\max_i
+(w_\alpha(s_i^2)-1)^2 s_i^2
+\]
+
+y sea $i^*$ un índice donde se alcanza el máximo. Tomamos
+
+\[
+z = u_{i^*}.
+\]
+
+Como $\{u_i\}$ es ortonormal,
+
+\[
+z^T u_{i^*}=1,
+\quad
+z^T u_i=0 \ (i\neq i^*),
+\quad
+\|z\|=1.
+\]
+
+Entonces
+
+\[
+\|e_\alpha^{\text{trunc}}\|^2
+=
+(w_\alpha(s_{i^*}^2)-1)^2 s_{i^*}^2
+=
+\beta^*
+=
+\beta^{*}\|z\|^2.
+\]
+
+Por lo tanto la desigualdad (1.26) se alcanza como igualdad,
+y la cota es óptima (sharp).   
+\end{solution}
+
+        \item \textbf{Ejercicio 1.9.} Muestra que el lado derecho de (1.27) se minimiza con la elección (1.28). Luego confirma (1.29).
+        \begin{equation}
+            \|e_\alpha\| \leq \alpha^{1/2}\|z\|+\alpha^{-1/2} \delta.
+            \tag{1.27}
+        \end{equation}
+        \begin{equation}
+            \alpha = \frac{\delta}{\|z\|}.
+            \tag{1.28}
+        \end{equation}
+        \begin{equation}
+            \|e_\alpha\|\leq 2\|z\|^{1/2} \delta^{1/2}
+            \tag{1.29}
+        \end{equation}
+    \end{enumerate}
+    \begin{solution}
+Queremos minimizar para $\alpha>0$ la función
+
+\[
+f(\alpha)=\alpha^{1/2}\|z\|+\alpha^{-1/2}\delta.
+\]
+
+Derivando respecto a $\alpha$,
+
+\[
+f'(\alpha)
+=
+\frac{1}{2}\alpha^{-1/2}\|z\|
+-
+\frac{1}{2}\alpha^{-3/2}\delta.
+\]
+
+Igualamos a cero:
+
+\begin{align*}
+0
+&=
+\alpha^{-1/2}\|z\|
+-
+\alpha^{-3/2}\delta \\
+0
+&=
+\alpha^{-1/2}\left(\|z\|-\alpha^{-1}\delta\right).
+\end{align*}
+
+Como $\alpha^{-1/2}\neq 0$, se obtiene
+
+\[
+\|z\|-\alpha^{-1}\delta=0
+\quad\Rightarrow\quad
+\alpha=\frac{\delta}{\|z\|}.
+\]
+
+Además,
+\begin{align*}
+f''(\alpha)
+&=
+-\frac{1}{4}\alpha^{-3/2}\|z\|+
+\frac{3}{4}\alpha^{-5/2}\delta,\\
+f''\left(\frac{\delta}{\|z\|}\right)
+&=
+-\frac{1}{4}\left(\frac{\delta}{\|z\|}\right)^{-3/2}\|z\|+
+\frac{3}{4}\left(\frac{\delta}{\|z\|}\right)^{-5/2}\delta,\\
+&=
+-\frac{1}{4}\delta^{-3/2}\|z\|^{5/2}+
+\frac{3}{4}\delta^{-3/2}\|z\|^{5/2},\\
+&=
+\frac{1}{2}\delta^{-3/2}\|z\|^{5/2},\\
+&=
+\frac{1}{2}\|z\|\left(\frac{\|z\|}{\delta}\right)^{3/2},\\
+&=
+\frac{1}{2}\|z\|\alpha^{-3/2}\frac{\delta}{\delta},\\
+&=\frac{1}{2}\alpha^{-5/2}\delta,\\
+\end{align*}
+como $\alpha$ y $\delta$ son positivos, se concluye que 
+\[
+f''(\alpha)>0,
+\]
+
+por lo que este punto crítico corresponde a un mínimo.
+Esto prueba (1.28).
+
+Sustituyendo en (1.27):
+
+\begin{align*}
+\|e_\alpha\|
+&\leq
+\left(\frac{\delta}{\|z\|}\right)^{1/2}\|z\|
++
+\left(\frac{\delta}{\|z\|}\right)^{-1/2}\delta \\
+&\leq
+\delta^{1/2}\|z\|^{1/2}
++
+\delta^{1/2}\|z\|^{1/2} \\
+&\leq
+2\delta^{1/2}\|z\|^{1/2}.
+\end{align*}
+
+Esto confirma (1.29).
+\end{solution}
+    \item Haz un reporte sobre la solución del problema inverso con regularización TSVD y Tikhonov con principio de discrepancia, usando diferentes tamaños de discretización que tú elijas (por ejemplo \( n = 10, 50, 100 \) puntos y relación señal-ruido \( SNR = \frac{\max}{\sigma_g} = 10, 20, 100 \)).
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.75\linewidth]{C:/Users/chris/OneDrive/Escritorio/python/CIMAT/problemas inversos/Tarea_1/Tarea_1c_n10_SNR10.pdf}
+    \caption{Comparación de filtros ($n=10$, $\mathrm{SNR}=10$)}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.75\linewidth]{C:/Users/chris/OneDrive/Escritorio/python/CIMAT/problemas inversos/Tarea_1/Tarea_1c_n10_SNR20.pdf}
+    \caption{Comparación de filtros ($n=10$, $\mathrm{SNR}=20$)}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.75\linewidth]{C:/Users/chris/OneDrive/Escritorio/python/CIMAT/problemas inversos/Tarea_1/Tarea_1c_n10_SNR100.pdf}
+    \caption{Comparación de filtros ($n=10$, $\mathrm{SNR}=100$)}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.75\linewidth]{C:/Users/chris/OneDrive/Escritorio/python/CIMAT/problemas inversos/Tarea_1/Tarea_1c_n50_SNR10.pdf}
+    \caption{Comparación de filtros ($n=50$, $\mathrm{SNR}=10$)}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.75\linewidth]{C:/Users/chris/OneDrive/Escritorio/python/CIMAT/problemas inversos/Tarea_1/Tarea_1c_n50_SNR20.pdf}
+    \caption{Comparación de filtros ($n=50$, $\mathrm{SNR}=20$)}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.75\linewidth]{C:/Users/chris/OneDrive/Escritorio/python/CIMAT/problemas inversos/Tarea_1/Tarea_1c_n50_SNR100.pdf}
+    \caption{Comparación de filtros ($n=50$, $\mathrm{SNR}=100$)}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.75\linewidth]{C:/Users/chris/OneDrive/Escritorio/python/CIMAT/problemas inversos/Tarea_1/Tarea_1c_n100_SNR10.pdf}
+    \caption{Comparación de filtros ($n=100$, $\mathrm{SNR}=10$)}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.75\linewidth]{C:/Users/chris/OneDrive/Escritorio/python/CIMAT/problemas inversos/Tarea_1/Tarea_1c_n100_SNR20.pdf}
+    \caption{Comparación de filtros ($n=100$, $\mathrm{SNR}=20$)}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.75\linewidth]{C:/Users/chris/OneDrive/Escritorio/python/CIMAT/problemas inversos/Tarea_1/Tarea_1c_n100_SNR100.pdf}
+    \caption{Comparación de filtros ($n=100$, $\mathrm{SNR}=100$)}
+\end{figure}
+\textbf{Conclusión}
+Se observa que para la discretización  $n=10$ los valores singulares se mantienen por encima de 1 y no presentan un decaimiento apreciable en ninguna de las pruebas de SNR. Esto indica que la matriz obtenida con esta discretización es numéricamente estable y poco sensible al ruido.\\
+
+En cambio, para $n=50$ y $n=100$ los valores singulares muestran un decaimiento marcado. A mayor SNR, el espectro se extiende hacia valores más pequeños, lo que implica que la matriz se vuelve más sensible a perturbaciones en los datos. Esta sensibilidad se traduce en una mayor amplificación del ruido cuando se intenta invertir el sistema sin regularización.
+
+\end{enumerate}
+
+\end{document}

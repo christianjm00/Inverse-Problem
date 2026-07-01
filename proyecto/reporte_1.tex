@@ -1,0 +1,494 @@
+\documentclass[12pt,spanish,mexico]{article}
+\usepackage[utf8]{inputenc}
+\PassOptionsToPackage{hyphens}{url}
+\usepackage{hyperref}
+\usepackage[es-nodecimaldot]{babel} % nombre de opción corregido
+\usepackage{amsthm, amssymb, amsmath, amsfonts, bbm, mathtools}
+\usepackage{csquotes}
+\usepackage{enumerate}
+\usepackage[shortlabels]{enumitem}
+\usepackage{titling}
+\usepackage{blindtext}
+\usepackage{lmodern} 
+\usepackage{float}
+\usepackage{mathrsfs}
+\usepackage[capitalise]{cleveref}
+\usepackage{caption} 
+\usepackage{graphicx}
+\usepackage{chngcntr}
+\usepackage{enumitem}    
+\usepackage{cleveref} 
+\usepackage[ruled,vlined]{algorithm2e}
+
+\counterwithin{figure}{section}
+\numberwithin{equation}{section}
+\usepackage[vmargin=1in, hmargin=0.5in]{geometry}  
+
+\setlength{\topmargin}{-50pt}
+\setlength{\headheight}{38.23112pt}
+\setlength{\headsep}{24pt}
+
+\makeatletter
+\def\iftitle{\ifx\thetitle \empty \else }
+\def\safetitle{\iftitle{\thetitle}\fi}
+\def\headertitle{%
+    \ifdefined\hw{\hw}\fi%
+    \ifdefined\hw \iftitle{ -- }\fi%
+    \safetitle%
+}
+\def\@maketitle{%
+  \begin{center}%
+Proyecto: Asimilación de datos 4D-Var con el modelo logístico \\
+Muñoz Macías Christian Jaime 
+    \vskip 1em%
+    \hrule
+  \end{center}%
+  \par
+  \vskip 1.5em%
+}
+\makeatother
+\usepackage{amsmath}
+\usepackage{tikz}
+
+\newcommand\RADot{%
+  \mathord{%
+    \mspace{1mu}%
+    \text{\radot}%
+    \mspace{1mu}%
+  }%
+}
+
+\newcommand\radot{%
+    \tikz[line cap=round,x=1ex,y=1ex,line width=0.3pt]
+    {\draw (0,1) |- (1,0) (0.55,0) arc(0:90:0.55); \fill (0.23,0.23) circle (0.05);}%
+}
+
+%% encabezado personalizado
+\usepackage{fancyhdr}
+%% estilo plain personalizado
+\fancypagestyle{plain}{%
+    \fancyhf{} % limpia encabezado y pie de página
+    \renewcommand{\headrulewidth}{0pt}
+    \setlength{\headheight}{0pt}
+    \fancyfoot[R]{\thepage}
+}
+%% estilo para todas las páginas
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[C]{Maestría en Matemáticas Aplicadas}
+\fancyfoot[R]{\thepage}
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+%% DEFINICIONES ÚTILES %%
+%%%%%%%%%%%%%%%%%%%%%%%%
+%% definiciones matemáticas
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\Ha}{\mathcal{H}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\PP}{\mathbb{P}}
+
+\newtheorem{proposition}{Proposición}
+\newtheorem{theorem}{Teorema}
+\newtheorem{lemma}{Lema}
+\newtheorem{corollary}{Corolario}
+
+\theoremstyle{definition}
+\newtheorem{problem}{Problema}
+\newtheorem{definition}{Definición}[section]
+\newtheorem*{example}{Ejemplo}
+
+\theoremstyle{remark}
+\newtheorem*{observation}{Observación}
+\newtheorem*{note}{Nota}
+
+\newenvironment{solution}{\begin{proof}[Solución]}{\end{proof}}
+\newenvironment{dem}{\begin{proof}[Demostración]}{\end{proof}}
+\renewcommand{\qedsymbol}{$\blacksquare$}
+
+%% comandos útiles
+\newcommand{\eps}{\varepsilon}
+\newcommand{\To}{\longrightarrow}
+\newcommand{\Eu}{\varPhi}
+\newcommand{\Mapsto}{\longmapsto}
+
+%% delimitadores emparejados
+\DeclarePairedDelimiter{\set}{\{}{\}}
+\DeclarePairedDelimiter{\floor}\lfloor\rfloor
+\DeclarePairedDelimiter{\ceil}\lceil\rceil
+\DeclarePairedDelimiter{\abs}\lvert\rvert
+\DeclarePairedDelimiter{\gen}\langle\rangle
+\DeclareMathOperator{\sgn}{sgn}
+\DeclareMathOperator{\ord}{ord}
+
+%% operador
+\newcommand{\op}[1]{\operatorname{#1}}
+
+%% etiquetas del documento
+\title{Proyecto: Asimilación de datos 4D-Var con el modelo logístico}
+\def\course{Materia}
+\def\university{CIMAT - MsC. Maestría en matemáticas aplicadas}
+\author{Muñoz Macías Christian Jaime}
+\def\email{\url{christian.munoz@cimat.mx}}
+\date{\today}
+
+%% permitir saltos de línea en ecuaciones
+\allowdisplaybreaks[4]
+
+\begin{document}
+
+\maketitle
+
+\section{Modelo dinámico}
+La dinámica del estado \(x(t)\) está gobernada por la ecuación logística
+\[
+\frac{dx}{dt} = r x \left(1 - \frac{x}{K}\right), \quad t \in [0, T], \qquad (1)
+\]
+con condición inicial
+\[
+x(0) = X_0, \qquad (2)
+\]
+donde los parámetros \(r > 0\) y \(K > 0\) se suponen conocidos y la incógnita es el estado inicial \(X_0\). Para hacer explícita la dependencia del control, denotamos por \(x(t; X_0)\) la solución de (1)–(2), y abreviamos \(x^\dagger(t) := x(t; X_0^\dagger)\) para la trayectoria verdadera. Disponemos de \(N\) observaciones ruidosas
+\[
+y_i = x^\dagger(t_i) + \eta_i, \quad \eta_i \sim \mathcal{N}(0, \sigma^2), \quad i = 1, \dots, N, \qquad (3)
+\]
+en tiempos \(0 < t_1 < \dots < t_N \leq T\) distribuidos a lo largo de la ventana de asimilación \([0, T]\). Adicionalmente contamos con un valor de background \(X_0^b\) —una estimación previa de la condición inicial— con incertidumbre caracterizada por la varianza \(B > 0\).
+
+\section{Funcional 4D-Var}
+El método 4D-Var formula la asimilación como el problema de optimización
+\[
+\min_{X_0 \in \mathbb{R}} J(X_0) = \underbrace{\frac{1}{2B}(X_0 - X_0^b)^2}_{\text{término de background } J_b} + \underbrace{\frac{1}{2\sigma^2} \sum_{i=1}^N (x(t_i; X_0) - y_i)^2}_{\text{término de observaciones } J_o} \qquad (4)
+\]
+sujeto a la restricción dinámica (1)–(2). La solución \(\hat{X}_0\) de (4) es el análisis; la trayectoria \(x(t; \hat{X}_0)\) obtenida al integrar el modelo desde \(\hat{X}_0\) es el análisis 4D. Bayesianamente, \(\hat{X}_0\) es el estimador de máximo a posteriori bajo verosimilitud gaussiana de los errores y prior gaussiana \(X_0 \sim \mathcal{N}(X_0^b, B)\).
+
+\section{Datos del problema}
+Los parámetros son como se indica en la siguiente tabla:
+
+\begin{table}[H]
+\centering
+\begin{tabular}{|l|l|c|}
+\hline
+Nombre & Significado & Valor \\
+\hline
+\(r\) & Tasa de crecimiento (conocida) & 1.0 \\
+\(K\) & Capacidad de carga (conocida) & 100 \\
+\(T\) & Horizonte / ventana de asimilación & 5 \\
+\(X_0^{\dagger}\) & Estado inicial verdadero (oculto) & 10 \\
+\(X_0^{b}\) & Estado inicial background & por elegir \\
+\(B\) & Varianza del background & por elegir \\
+\(N\) & Número de observaciones en \([0, T]\) & 10 \\
+\(\sigma\) & Desviación estándar del ruido & \(0.05 \cdot \max_{t\in[0,T]} x^{\dagger}(t)\) \\
+\(\tau_k\) & Paso de descenso en iteración \(k\) & búsqueda de línea \\
+\hline
+\end{tabular}
+\end{table}
+
+\textbf{Observación importante sobre la ventana.} Se sugiere \(T = 5\). Con \(r = 1\) y \(X_0^{\dagger} = 10\), el sistema satura en \(t \approx 7\); tomar la ventana hasta \(t = 5\) asegura que las observaciones contengan información sobre la fase de crecimiento, donde \(X_0\) es realmente identificable. 
+
+\textbf{Discusión: efecto del tamaño de la ventana de asimilación.}
+En la observación anterior se plantean dos casos: cuando $x \approx K$ hay
+saturación, y cuando el término $\frac{x(t)}{K} \approx 0$ domina el
+comportamiento exponencial. Analizando estos dos casos:
+
+\begin{itemize}
+    \item \textbf{$T$ demasiado grande (saturación):} si la ventana se
+    extiende hasta la zona plana de la logística, la mayoría de las
+    observaciones caen en la región donde $x(t) \approx K$ y la
+    trayectoria es prácticamente insensible a $X_0$. Con ruido gaussiano
+    superpuesto, el funcional $J_o$ queda dominado por esas observaciones
+    no informativas, y el optimizador ajusta el modelo a la fase saturada
+    sin poder distinguir el valor correcto de $X_0$. El análisis resultante
+    puede ser muy lejano al valor verdadero.
+
+    \item \textbf{$T$ demasiado pequeño (poca información):} si la ventana
+    abarca únicamente el inicio de la trayectoria, las observaciones cubren
+    solo la fase de crecimiento casi exponencial, en la cual la logística
+    es localmente indistinguible de $x(t) \approx X_0 e^{rt}$. En ese
+    régimen, $K$ apenas influye en la solución y la información disponible
+    es insuficiente para caracterizar el comportamiento completo del modelo,
+    lo que produce una estimación de $X_0$ igualmente poco confiable.
+\end{itemize}
+
+
+\section{Resolución del problema de asimilación 4D-Var}
+
+\subsection{Deducción de la ecuación adjunta}
+Partiendo del Lagrangiano (5), calcula la variación \(\langle \partial\mathcal{L}/\partial x, h \rangle\) en una dirección arbitraria \(h(t)\) con \(h(0)\) libre, integra por partes y anula la variación. Obtén la ecuación adjunta
+\[
+-\dot{\lambda} - r \left( 1 - \frac{2x(t; X_0)}{K} \right) \lambda = -\frac{1}{\sigma^2} \sum_{i=1}^{N} \left( x(t_i; X_0) - y_i \right) \delta(t - t_i), \quad \lambda(T) = 0, \quad (6)
+\]
+junto con la condición de transversalidad \(\mu = \lambda(0)\) que relaciona el multiplicador de la EDO con el de la condición inicial. Aquí \(x(t; X_0)\) es la solución forward para el valor actual del control, es decir, el coeficiente de la EDO adjunta depende de la trayectoria forward y debe almacenarse durante la simulación del problema directo.
+
+\begin{solution}
+El funcional es:
+\[
+J(X_0) = \frac{1}{2B}(X_0 - X_0^b)^2 + \frac{1}{2\sigma^2} \sum_{i=1}^N (x(t_i; X_0) - y_i)^2
+\]
+Tenemos como Lagrangiano:
+\[
+\mathcal{L}(x, X_0, \lambda) = J(X_0) + \int_0^T \lambda(t) \left[ \dot{x} - r x(1 - x/K) \right] dt + \mu(x(0) - X_0), 
+\]
+sabemos que minimizar tiene que cumplir que: 
+$\nabla J= \nabla \mathcal{L}$
+entonces la derivada direccional de $J$ es:
+\begin{align*}
+D J(X_0)h =& D \mathcal{L}(x,X_0)(\xi,h) \\
+=& D_x \mathcal{L} \xi+D_{X_0} \mathcal{L} h
+\end{align*}
+
+
+Lo anterior es válido porque en el punto estacionario las variaciones respecto a $\lambda$ se anulan (recuperan la ecuación forward), de modo que $D\mathcal{L}$ colapsa a $DJ$.
+
+derivando respecto a $x$:
+\[
+D_x \mathcal{L} \xi = \frac{1}{\sigma^2} \sum_{i=1}^N (x(t_i) - y_i) \xi(t_i)+  \int_0^T \lambda(t) \left[ \dot{\xi}-r\left(1 -\frac{2x}{K} \right)\xi \right] dt + \mu\,\xi(0),
+\]
+
+intercambiar el diferencial con la integral es válido por la regularidad de $\lambda$ y $\xi$.
+
+derivando respecto a $X_0$:
+\[
+D_{X_0} \mathcal{L} h= \frac{1}{B}(X_0 - X_0^b)h - \mu h, 
+\]
+
+nos interesa que $D_x \mathcal{L} \xi=0$, para ello trabajamos el término:
+\[
+\int_0^T \lambda(t) \left[ \dot{\xi}-r\left(1 -\frac{2x}{K} \right)\xi \right] dt 
+\]
+usando la regla del producto en $\lambda(t)\dot{\xi}$:
+\[
+\frac{d}{dt}(\lambda \xi)=\dot{\lambda} \xi+\lambda \dot{\xi}
+\implies
+\lambda \dot{\xi}=\frac{d}{dt}(\lambda \xi)-\dot{\lambda} \xi
+\]
+entonces la integral queda:
+\[
+\int_0^T \frac{d}{dt}(\lambda \xi)-\dot{\lambda} \xi-r\left(1 -\frac{2x}{K} \right)\lambda \xi \;  dt 
+\]
+evaluando el término de frontera:
+\[
+\int_0^T \frac{d}{dt}(\lambda \xi)\, dt=\lambda(T)\xi(T)-\lambda(0)\xi(0)=-\lambda(0)\xi(0)
+\]
+donde usamos $\lambda(T)=0$. Sustituyendo en $D_x\mathcal{L}\,\xi = 0$:
+\[
+\frac{1}{\sigma^2} \sum_{i=1}^N (x(t_i) - y_i) \xi(t_i)+\int_0^T\left[-\dot{\lambda} -r\left(1 -\frac{2x}{K} \right)\lambda\right] \xi \;  dt + (\mu - \lambda(0))\,\xi(0)= 0, 
+\]
+como $\xi(0)$ es libre, para que esto se anule para toda dirección $\xi$ el coeficiente de $\xi(0)$ debe ser cero:
+\[
+\mu = \lambda(0) \qquad \text{(condición de transversalidad)}
+\]
+cancelado ese término, usando que $\xi(t_i)=\int_0^T \xi(t)\,\delta(t-t_i)\,dt$, la condición debe valer para todo $\xi$, lo que implica la igualdad puntual:
+\[
+-\dot{\lambda}-r\left(1 -\frac{2x}{K} \right)\lambda=- \frac{1}{\sigma^2} \sum_{i=1}^N (x(t_i) - y_i) \delta (t-t_i)
+\]
+hemos deducido la ecuación adjunta con condición terminal $\lambda(T)=0$.
+\end{solution}
+\subsection{Deducción del gradiente reducido}
+Varía \(\mathcal{L}\) respecto a \(X_0\), usa que \(x, \lambda\) satisfacen las ecuaciones forward y adjunta, y deduce
+\[
+\frac{dJ}{dX_0} = \frac{X_0 - X_0^b}{B} - \lambda(0). \quad (7)
+\]
+Comenta el significado: el gradiente es la suma de un tirón hacia la estimación inicial (primer término) y la sensibilidad retrógrada de las observaciones al estado inicial (segundo término, \(\lambda(0)\)). Esto justifica llamar al adjunto el “transportador hacia atrás de la información de las observaciones”.
+
+\begin{solution}
+Variamos $\mathcal{L}$ respecto a $X_0$ en una dirección $h$:
+\[
+D_{X_0} \mathcal{L}\, h = \frac{1}{B}(X_0 - X_0^b)h - \mu h
+\]
+como $x$ y $\lambda$ satisfacen las ecuaciones forward y adjunta, esta variación coincide con $DJ(X_0)h$, entonces:
+\[
+\frac{dJ}{dX_0} h= \frac{1}{B}(X_0 - X_0^b)h - \mu h
+\]
+sustituyendo la condición de transversalidad $\mu = \lambda(0)$ obtenida en el punto anterior:
+\[
+\boxed{\frac{dJ}{dX_0} = \frac{X_0 - X_0^b}{B} - \lambda(0)}
+\]
+El primer término jala la solución hacia el background; el segundo, $-\lambda(0)$, transporta hacia atrás la información de las observaciones a través de la ecuación adjunta.
+\\
+\\
+El gradiente tiene una interpretación clara: si se busca minimizar $J$, el término 
+$\frac{X_0 - X_0^b}{B}$ empuja a $X_0$ hacia el background $X_0^b$, pues se anula 
+exactamente cuando $X_0 = X_0^b$. Por otro lado, $\lambda(0)$ es la solución en $t=0$ 
+de la ecuación adjunta (6), que es una EDO lineal de primer orden no homogénea retrógrada 
+en $[0,T]$: su término forzante son las discrepancias $(x(t_i;X_0)-y_i)$ en los tiempos 
+de observación, y al integrar de $T$ hacia $0$ propaga esa información hasta el estado 
+inicial. De ahí que $-\lambda(0)$ mida la sensibilidad acumulada de todas las observaciones 
+respecto a $X_0$, jalando el análisis hacia donde los datos son más consistentes.
+
+\end{solution}
+
+\subsection{Generación de datos sintéticos}
+Adopta el protocolo estándar de validación 4D-Var:
+\begin{enumerate}[label=(\alph*)]
+\item Integra (1) con \(X_0^\dagger = 10\) usando RK4 sobre \([0, 5]\);
+
+\item Muestra \(N = 10\) observaciones en tiempos equiespaciados \(t_i = 0.5\, i\) para \(i = 1, \dots, 10\);
+\item Añade ruido gaussiano con \(\sigma = 0.05 \cdot \max_{t\in[0,T]} x^\dagger(t)\).
+\end{enumerate}
+La trayectoria verdadera te servirá únicamente como referencia para medir el error del análisis; el algoritmo nunca la verá.
+
+\subsection{Implementación forward}
+Implementa un integrador RK4 para (1) que reciba \(X_0\) y devuelva la trayectoria \(x(t; X_0)\) sobre una malla densa que contenga los \(t_i\). Almacena la trayectoria; el adjunto la necesitará como coeficiente.
+
+\subsection{Implementación del adjunto}
+Implementa la integración retrógrada de (6) de \(T\) a \(0\), partiendo de \(\lambda(T) = 0\). Al cruzar cada \(t_i\) de derecha a izquierda, incorpora el salto
+\[
+\lambda(t_i^-) = \lambda(t_i^+) + \frac{1}{\sigma^2}(x(t_i; X_0) - y_i).
+\]
+Verifica con cuidado la consistencia de signos. El signo del salto se obtiene integrando la \(\delta\) de Dirac de la ecuación adjunta (6) sobre un entorno \([t_i-\epsilon, t_i+\epsilon]\) y haciendo \(\epsilon \to 0\); con la convención de signos de (6) y la integración de \(T\) hacia \(0\), el incremento \(\lambda(t_i^-) - \lambda(t_i^+)\) es positivo cuando \(x(t_i; X_0) > y_i\). Un error de signo aquí es la causa más frecuente de fallo del test de Taylor (punto siguiente). Devuelve \(\lambda(0)\) y, con él, ensambla el gradiente (7).
+
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\linewidth]{C:/Users/chris/OneDrive/escritorio/python/CIMAT/problemas inversos/gra_x_lamb_B_0.1.pdf}
+    \caption{Trayectoria verdadera $x^\dagger(t)$, trayectoria obtenida a partir del background $X_0^b$ y solución adjunta $\lambda(t)$, con $B = 0.1$.}
+\end{figure}
+\subsection{Test de Taylor}
+Antes de optimizar, valida tu gradiente. Para una dirección $\delta X_0 \in \mathbb{R}$
+arbitraria y para \\
+$\varepsilon \in \{10^{-1}, 10^{-2}, \dots, 10^{-8}\}$, calcula
+\[
+E_1(\varepsilon) = |J(X_0 + \varepsilon \delta X_0) - J(X_0)|, \quad
+E_2(\varepsilon) = |J(X_0 + \varepsilon \delta X_0) - (J(X_0) +
+\varepsilon \tfrac{dJ}{dX_0} \delta X_0)|.
+\]
+$E_1$ debe decaer con pendiente 1 y $E_2$ con pendiente 2 en gráfica log-log,
+ambos sobre al menos cuatro órdenes de magnitud. Si la pendiente de $E_2$ no
+es 2.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\linewidth]{C:/Users/chris/OneDrive/escritorio/python/CIMAT/problemas inversos/gra_E1_E2_B_0.1.pdf}
+    \caption{Comparación de $E_1$ y $E_2$ en escala log-log para el test de Taylor.}
+\end{figure}
+
+La figura muestra el comportamiento de ambos indicadores en escala log-log.
+Para $\varepsilon \in [10^{-8}, 10^{-5}]$ ambas curvas presentan pendiente~1,
+es decir, en este régimen $E_1$ y $E_2$ se comportan de manera idéntica: los
+errores de redondeo en aritmética de punto flotante dominan y enmascaran la
+diferencia entre ambos indicadores. En el intervalo intermedio
+$\varepsilon \in [10^{-5}, 10^{-4}]$ se aprecia una transición con pendiente
+$1 < m < 2$, donde $E_2$ comienza a separarse de $E_1$. Finalmente, para
+$\varepsilon \in [10^{-4}, 10^{-1}]$ la pendiente de $E_2$ alcanza el
+valor~2 esperado, confirmando que en este régimen el término cuadrático
+domina y el gradiente adjunto es consistente con el funcional. Se concluye
+que la derivada calculada es correcta.
+
+\subsection{Minimización 4D-Var}
+Implementa descenso más pronunciado con búsqueda de línea de Armijo:
+\begin{enumerate}[label=(\alph*)]
+    \item Resolver el problema forward con $X_0^{(k)}$ para obtener $x_k(t)$;
+    \item Resolver el problema adjunto para obtener $\lambda_k(0)$;
+    \item Ensamblar el gradiente~(7);
+    \item Aplicar búsqueda de línea de Armijo y actualizar
+          $X_0^{(k+1)} = X_0^{(k)} - \tau_k \dfrac{dJ}{dX_0}$.
+\end{enumerate}
+Se inicializa con $X_0^{(0)} = X_0^b$ (el background). Se reporta la convergencia
+de $J(X_0^{(k)})$, $|dJ/dX_0|$ y $|X_0^{(k)} - X_0^\dagger|$.
+
+\subsection{Estudio del peso relativo background/observaciones}
+Se realizan tres experimentos de asimilación variando la confianza relativa entre
+el background y las observaciones, manteniendo $X_0^b = 5$ (alejado del valor
+verdadero $X_0^\dagger = 10$):
+
+\subsubsection*{(a) Background dominante: $B = 0.1$}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\linewidth]{C:/Users/chris/OneDrive/escritorio/python/CIMAT/problemas inversos/gra_J_0.1.pdf}
+    \caption{Evolución del funcional $J$ a lo largo de las iteraciones, $B = 0.1$.}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\linewidth]{C:/Users/chris/OneDrive/escritorio/python/CIMAT/problemas inversos/gra_nablaJ_B_0.1.pdf}
+    \caption{Evolución de $|\nabla J|$ a lo largo de las iteraciones, $B = 0.1$.}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\linewidth]{C:/Users/chris/OneDrive/escritorio/python/CIMAT/problemas inversos/gra_X0_B_0.1.pdf}
+    \caption{Evolución del error $|X_0^{(k)} - X_0^\dagger|$ a lo largo de
+    las iteraciones, $B = 0.1$.}
+\end{figure}
+
+Con $B = 0.1$ el término de la estimación inicial domina ampliamente al término de
+observaciones en el funcional $J$. El análisis converge a
+$\hat{X}_0 \approx 6.2$, es decir, a menos de $1.2$ unidades del estimación inicial
+$X_0^b = 5$ y a más de $3.8$ unidades del valor verdadero $X_0^\dagger = 10$.
+Esta varianza tan pequeña penaliza fuertemente cualquier desviación respecto
+al prior, de modo que las observaciones tienen poca capacidad para corregir
+la estimación inicial. El resultado muestra un resultado conservador a la estimación inicial.
+
+\subsubsection*{(b) Régimen equilibrado: $B = 10$}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\linewidth]{C:/Users/chris/OneDrive/escritorio/python/CIMAT/problemas inversos/gra_J_10.0.pdf}
+    \caption{Evolución del funcional $J$ a lo largo de las iteraciones, $B = 10$.}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\linewidth]{C:/Users/chris/OneDrive/escritorio/python/CIMAT/problemas inversos/gra_nablaJ_B_10.0.pdf}
+    \caption{Evolución de $|\nabla J|$ a lo largo de las iteraciones, $B = 10$.}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\linewidth]{C:/Users/chris/OneDrive/escritorio/python/CIMAT/problemas inversos/gra_X0_B_10.0.pdf}
+    \caption{Evolución del error $|X_0^{(k)} - X_0^\dagger|$ a lo largo de
+    las iteraciones, $B = 10$.}
+\end{figure}
+
+Con $B = 10$ el peso relativo entre la estimación inicial y las observaciones es más
+equilibrado. El análisis converge a $\hat{X}_0 \approx 9.35$, a solo $0.65$
+unidades del valor verdadero $X_0^\dagger = 10$. Al otorgar mayor importancia
+a los datos, el algoritmo puede alejarse significativamente del 
+estado inicial y aproximarse al estado verdadero. Este caso representa un compromiso
+razonable entre regularización y ajuste a las observaciones.
+
+
+\subsubsection*{(c) Observaciones dominantes: $B = 10^4$}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\linewidth]{C:/Users/chris/OneDrive/escritorio/python/CIMAT/problemas inversos/gra_J_10000.0.pdf}
+    \caption{Evolución del funcional $J$ a lo largo de las iteraciones,
+    $B = 10^4$.}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\linewidth]{C:/Users/chris/OneDrive/escritorio/python/CIMAT/problemas inversos/gra_nablaJ_B_10000.0.pdf}
+    \caption{Evolución de $|\nabla J|$ a lo largo de las iteraciones,
+    $B = 10^4$.}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\linewidth]{C:/Users/chris/OneDrive/escritorio/python/CIMAT/problemas inversos/gra_X0_B_10000.0.pdf}
+    \caption{Evolución del error $|X_0^{(k)} - X_0^\dagger|$ a lo largo de
+    las iteraciones, $B = 10^4$.}
+\end{figure}
+
+Con $B = 10^4$ el término de la estimación inicial se vuelve prácticamente inactivo y
+el funcional está dominado por el ajuste a las observaciones. El análisis
+converge a $\hat{X}_0 \approx 10.2$, el resultado más cercano al valor
+verdadero $X_0^\dagger = 10$ de los tres experimentos, con un error absoluto
+de apenas $0.2$ unidades. La ligera sobreestimación es atribuible al ruido
+gaussiano en las observaciones, cuya realización particular eleva
+marginalmente la media muestral. Este caso muestra que, cuando la estimación inicial
+es poco confiable, confiar casi exclusivamente en los datos produce la mejor
+recuperación del estado verdadero.
+
+\bigskip
+\noindent\textbf{Conclusión del estudio.}\quad
+Los tres experimentos ilustran el papel regulador de $B$ en el funcional
+4D-Var. Un valor pequeño de $B$ ancla la solución cerca de la estimación inicial e
+impide que las observaciones corrijan estimaciones iniciales erróneas; un
+valor grande relega el prior y permite que los datos guíen la optimización.
+En la práctica, $B$ debe calibrarse de acuerdo con la incertidumbre real del
+estimación inicial: sobreestimar esa confianza produce análisis sesgados hacia el
+prior, mientras que subestimarla puede amplificar el ruido de las
+observaciones. El caso $B = 10^4$ sugiere que, para este problema, la
+información contenida en las diez observaciones es suficiente para recuperar
+$X_0^\dagger$ con alta precisión incluso partiendo de una estimación inicial alejada de
+$5$ unidades del valor verdadero.
+\end{document}
