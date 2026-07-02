@@ -1,0 +1,304 @@
+\documentclass[12pt,spanish,mexico]{article}
+\usepackage[utf8]{inputenc}
+\PassOptionsToPackage{hyphens}{url}
+\usepackage{hyperref}
+\usepackage[es-nodecimaldot]{babel} % nombre de opción corregido
+\usepackage{amsthm, amssymb, amsmath, amsfonts, bbm, mathtools}
+\usepackage{csquotes}
+\usepackage{enumerate}
+\usepackage[shortlabels]{enumitem}
+\usepackage{titling}
+\usepackage{blindtext}
+\usepackage{lmodern} 
+\usepackage{float}
+\usepackage{mathrsfs}
+\usepackage[capitalise]{cleveref}
+\usepackage{caption} 
+\usepackage{graphicx}
+\usepackage{chngcntr}
+\usepackage{enumitem}
+\usepackage[ruled,vlined]{algorithm2e}
+
+\counterwithin{figure}{section}
+\numberwithin{equation}{section}
+\usepackage[vmargin=1in, hmargin=0.5in]{geometry}  
+
+\setlength{\topmargin}{-50pt}
+\setlength{\headheight}{38.23112pt}
+\setlength{\headsep}{24pt}
+
+\makeatletter
+\def\iftitle{\ifx\thetitle \empty \else }
+\def\safetitle{\iftitle{\thetitle}\fi}
+\def\headertitle{%
+    \ifdefined\hw{\hw}\fi%
+    \ifdefined\hw \iftitle{ -- }\fi%
+    \safetitle%
+}
+\def\@maketitle{%
+  \begin{center}%
+Tarea 3 - Problemas inversos - 11/03/2026 \\
+Muñoz Macías Christian Jaime 
+    \vskip 1em%
+    \hrule
+  \end{center}%
+  \par
+  \vskip 1.5em%
+}
+\makeatother
+\usepackage{amsmath}
+\usepackage{tikz}
+
+\newcommand\RADot{%
+  \mathord{%
+    \mspace{1mu}%
+    \text{\radot}%
+    \mspace{1mu}%
+  }%
+}
+
+\newcommand\radot{%
+    \tikz[line cap=round,x=1ex,y=1ex,line width=0.3pt]
+    {\draw (0,1) |- (1,0) (0.55,0) arc(0:90:0.55); \fill (0.23,0.23) circle (0.05);}%
+}
+
+%% encabezado personalizado
+\usepackage{fancyhdr}
+%% estilo plain personalizado
+\fancypagestyle{plain}{%
+    \fancyhf{} % limpia encabezado y pie de página
+    \renewcommand{\headrulewidth}{0pt}
+    \setlength{\headheight}{0pt}
+    \fancyfoot[R]{\thepage}
+}
+%% estilo para todas las páginas
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[C]{Maestría en Matemáticas Aplicadas}
+\fancyfoot[R]{\thepage}
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+%% DEFINICIONES ÚTILES %%
+%%%%%%%%%%%%%%%%%%%%%%%%
+%% definiciones matemáticas
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\Ha}{\mathcal{H}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\PP}{\mathbb{P}}
+
+\newtheorem{proposition}{Proposición}
+\newtheorem{theorem}{Teorema}
+\newtheorem{lemma}{Lema}
+\newtheorem{corollary}{Corolario}
+
+\theoremstyle{definition}
+\newtheorem{problem}{Problema}
+\newtheorem{definition}{Definición}[section]
+\newtheorem*{example}{Ejemplo}
+
+\theoremstyle{remark}
+\newtheorem*{observation}{Observación}
+\newtheorem*{note}{Nota}
+
+\newenvironment{solution}{\begin{proof}[Solución]}{\end{proof}}
+\newenvironment{dem}{\begin{proof}[Demostración]}{\end{proof}}
+\renewcommand{\qedsymbol}{$\blacksquare$}
+
+%% comandos útiles
+\newcommand{\eps}{\varepsilon}
+\newcommand{\To}{\longrightarrow}
+\newcommand{\Eu}{\varPhi}
+\newcommand{\Mapsto}{\longmapsto}
+
+%% delimitadores emparejados
+\DeclarePairedDelimiter{\set}{\{}{\}}
+\DeclarePairedDelimiter{\floor}\lfloor\rfloor
+\DeclarePairedDelimiter{\ceil}\lceil\rceil
+\DeclarePairedDelimiter{\abs}\lvert\rvert
+\DeclarePairedDelimiter{\gen}\langle\rangle
+\DeclareMathOperator{\sgn}{sgn}
+\DeclareMathOperator{\ord}{ord}
+
+%% operador
+\newcommand{\op}[1]{\operatorname{#1}}
+
+%% etiquetas del documento
+\title{Tarea 3 - Problemas inversos - 11/03/2026}
+\def\course{Materia}
+\def\university{CIMAT - MsC. Maestría en matemáticas aplicadas}
+\author{Muñoz Macías Christian Jaime}
+\def\email{\url{christian.munoz@cimat.mx}}
+\date{\today}
+
+%% permitir saltos de línea en ecuaciones
+\allowdisplaybreaks[4]
+
+\begin{document}
+
+\maketitle
+
+\section*{1. Algoritmo Metropolis-Hastings}
+
+Denotemos \(x = (x_1, x_2)^T \in \mathbb{R}^2\). Haz una implementación del algoritmo Metrópolis-Hastings para tomar muestras de una distribución objetivo
+
+\[
+\pi(x) \propto \exp \left( -10(x_1^2 - x_2)^2 - \left( x_2 - \frac{1}{4} \right)^4 \right) \tag{1}
+\]
+
+usando como propuesta
+
+\[
+q(x, x') \propto \exp \left( -\frac{1}{2\gamma^2} \|x - x'\|^2 \right) \tag{2}
+\]
+
+El algoritmo Metropolis-Hastings se describe a continuación:
+
+\begin{algorithm}[H]
+\caption{Metropolis-Hastings}
+\SetAlgoLined
+\KwIn{Punto inicial $x^{(0)}$, número de iteraciones $N$}
+\KwOut{$\{x^{(1)}, x^{(2)}, \ldots, x^{(N)}\}$}
+\For{$k = 0, 1, 2, \ldots, N-1$}{
+    Proponer $x' \sim q(x^{(k)}, \cdot)$\;
+    Calcular el logaritmo del cociente de aceptación:
+    \[
+    \log \alpha(x^{(k)}, x') = \min \left(0, \log \pi(x') - \log \pi(x^{(k)}) + \log q(x', x^{(k)}) - \log q(x^{(k)}, x')\right)
+    \]
+    Muestrear $u \sim U(0,1)$\;
+    \eIf{$\log u \leq \log \alpha(x^{(k)}, x')$}{
+        Aceptar: $x^{(k+1)} \leftarrow x'$\;
+    }{
+        Rechazar: $x^{(k+1)} \leftarrow x^{(k)}$\;
+    }
+}
+\Return $\{x^{(1)}, x^{(2)}, \ldots, x^{(N)}\}$
+\end{algorithm}
+
+siguiendo las siguientes instrucciones:
+
+\begin{enumerate}[label=(\alph*)]
+    \item Transforma el cálculo del cociente de aceptación $\alpha(x, x')$ a escala logarítmica. Esto evita la inestabilidad numérica ocasionada por calcular el cociente de dos números en $[0, 1]$. Nota que no es necesario conocer la constante de normalización de $\pi(x)$.
+    
+    \item Genera 10000 muestras de la posterior usando $\gamma = 0.001$, $\gamma = 0.05$, $\gamma = 0.1$ y $\gamma = 1$. Descarta los primeros 5000 pasos de la caminata.
+    
+    \item En cada caso, haz una gráfica de $-\log(\pi(x))$, de la caminata y las curvas de nivel de $\pi(x)$ (no importa que no conozcas la constante de normalización).
+    
+    \item Usa la librería \texttt{corner} de Python para representar el histograma obtenido con el muestreo.
+    
+    \item Tiempo integrado de autocorrelación. Dada una distribución $\pi(x)$, podemos calcular la esperanza de una función con respecto de la medida asociada a la distribución
+    \[
+    \mathbb{E}_{\pi(x)}[f(x)] = \int_{\mathbb{R}^2} f(x)\pi(x)\,dx
+    \]
+    Si $\{x^{(1)}, x^{(2)}, \ldots, x^{(N)}\}$ son muestras independientes de la distribución objetivo, entonces podemos aproximar la esperanza mediante el promedio ergódico
+    \[
+    \mathbb{E}_{\pi(x)}[f(x)] = \frac{1}{N} \sum_{i=1}^{N} f(x^{(i)}) + o\left(\frac{1}{\sqrt{N}}\right),
+    \]
+    y similarmente para la varianza
+    \[
+    \sigma^2 = \frac{1}{N} \operatorname{Var}_{\pi(x)}[f(x)].
+    \]
+    Cuando las muestras $\{x^{(1)}, x^{(2)}, \ldots, x^{(N)}\}$ se obtienen mediante Markov Chain Monte Carlo no son independientes y se cumple
+    \[
+    \sigma^2 = \frac{\tau_f}{N} \operatorname{Var}_{\pi(x)}[f(x)],
+    \]
+    donde $\tau_f$ se define como el tiempo integrado de autocorrelación, el cuál se interpreta como el número de pasos necesarios para obtener la siguiente muestra independiente.
+    
+    Usa el programa \texttt{pytwalk.py} para tomar muestras de la distribución (1) y calcula el tiempo integrado de correlación usando el método \texttt{.Ana()}.
+    
+
+    \begin{figure}[H]
+    \centering
+        \includegraphics[width=0.4\linewidth]{C:/Users/chris/OneDrive/Escritorio/python/CIMAT/problemas inversos/Tarea_3/T3_gamma=0.001_ga_c.pdf}
+        \caption{inciso (c) ($\gamma=0.001$)}
+    \end{figure}
+
+    \begin{figure}[H]
+    \centering
+        \includegraphics[width=0.4\linewidth]{C:/Users/chris/OneDrive/Escritorio/python/CIMAT/problemas inversos/Tarea_3/T3_gamma=0.05_ga_c.pdf}
+        \caption{inciso (c) ($\gamma=0.05$)}
+    \end{figure}
+    \begin{figure}[H]
+    \centering
+        \includegraphics[width=0.4\linewidth]{C:/Users/chris/OneDrive/Escritorio/python/CIMAT/problemas inversos/Tarea_3/T3_gamma=0.1_ga_c.pdf}
+        \caption{inciso (c) ($\gamma=0.1$)}
+    \end{figure}
+
+    \begin{figure}[H]
+    \centering
+        \includegraphics[width=0.4\linewidth]{C:/Users/chris/OneDrive/Escritorio/python/CIMAT/problemas inversos/Tarea_3/T3_gamma=1.0_ga_c.pdf}
+        \caption{inciso (c) ($\gamma=1$)}
+    \end{figure}
+    \begin{figure}[H]
+    \centering
+        \includegraphics[width=0.4\linewidth]{C:/Users/chris/OneDrive/Escritorio/python/CIMAT/problemas inversos/Tarea_3/T3_gamma=0.001_ga_d.pdf}
+        \caption{inciso (d) ($\gamma=0.001$)}
+    \end{figure}
+
+    \begin{figure}[H]
+    \centering
+        \includegraphics[width=0.4\linewidth]{C:/Users/chris/OneDrive/Escritorio/python/CIMAT/problemas inversos/Tarea_3/T3_gamma=0.05_ga_d.pdf}
+        \caption{inciso (d) ($\gamma=0.05$)}
+    \end{figure}
+    \begin{figure}[H]
+    \centering
+        \includegraphics[width=0.4\linewidth]{C:/Users/chris/OneDrive/Escritorio/python/CIMAT/problemas inversos/Tarea_3/T3_gamma=0.1_ga_d.pdf}
+        \caption{inciso (d) ($\gamma=0.1$)}
+    \end{figure}
+
+    \begin{figure}[H]
+    \centering
+        \includegraphics[width=0.4\linewidth]{C:/Users/chris/OneDrive/Escritorio/python/CIMAT/problemas inversos/Tarea_3/T3_gamma=1.0_ga_d.pdf}
+        \caption{inciso (d) ($\gamma=1$)}
+    \end{figure}
+    \subsection*{Reporte de (b), (c) y (d)}
+
+Se realizaron simulaciones del algoritmo de Metropolis-Hastings para distintos valores del parámetro $\gamma$, el cual controla la varianza de la propuesta gaussiana.
+
+Cuando $\gamma$ toma valores muy pequeños (por ejemplo $\gamma = 0.001$), las propuestas generan desplazamientos muy pequeños alrededor del estado actual. Como consecuencia, la cadena de Markov se mueve lentamente y explora únicamente una pequeña región del espacio de estados. Esto produce una caminata muy concentrada que no representa adecuadamente la distribución objetivo $\pi(x)$.
+
+Para valores intermedios de $\gamma$ (por ejemplo $\gamma = 0.05$ y $\gamma = 0.1$), la caminata comienza a explorar mejor el espacio. En estos casos las muestras generadas siguen de forma más clara las regiones de mayor probabilidad de la distribución $\pi(x)$, lo cual también puede observarse en las curvas de nivel y en los histogramas obtenidos con \texttt{corner}. En este rango la cadena presenta un equilibrio entre exploración y tasa de aceptación.
+
+Cuando $\gamma$ toma valores grandes (por ejemplo $\gamma = 1$), las propuestas generan saltos muy grandes en el espacio de estados. Esto provoca que muchas propuestas caigan en regiones de baja probabilidad y por lo tanto sean rechazadas con mayor frecuencia. Como resultado, la cadena puede volverse más dispersa y con menor eficiencia en la exploración de la distribución objetivo.
+
+En conclusión, el parámetro $\gamma$ controla el tamaño de los pasos de la caminata de Markov. Valores muy pequeños producen una exploración lenta del espacio, mientras que valores muy grandes generan muchas propuestas rechazadas. Un valor intermedio permite que la cadena reproduzca de forma más adecuada la estructura de la distribución $\pi(x)$.
+
+    \subsection*{(e) Tiempo integrado de autocorrelación}
+
+Se utilizó la librería \texttt{pytwalk} para generar muestras de la distribución objetivo y estimar el tiempo integrado de autocorrelación mediante el método \texttt{.Ana()}. Los resultados obtenidos fueron:
+
+\begin{itemize}
+    \item Tasas de aceptación para los kernels Walk, Traverse, Blow y Hop:
+    \[
+    (0.3597,\; 0.1584,\; 0.1818,\; 0.0000)
+    \]
+
+    \item Tasa de aceptación global:
+    \[
+    0.2591
+    \]
+
+    \item Máximo rezago usado para estimar la autocorrelación:
+    \[
+    \text{maxlag} = 110
+    \]
+
+    \item Tiempo integrado de autocorrelación:
+    \[
+    \tau = 40.3
+    \]
+
+    \item Tiempo integrado de autocorrelación normalizado:
+    \[
+    \frac{\tau}{n} = 20.1
+    \]
+\end{itemize}
+
+El tiempo integrado de autocorrelación $\tau$ indica que aproximadamente cada $40$ iteraciones de la cadena se obtiene una muestra aproximadamente independiente de la distribución objetivo.
+\end{enumerate}
+
+
+
+\end{document}

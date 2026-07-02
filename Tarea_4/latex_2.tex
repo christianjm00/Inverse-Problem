@@ -1,0 +1,391 @@
+\documentclass[12pt,spanish,mexico]{article}
+\usepackage[utf8]{inputenc}
+\PassOptionsToPackage{hyphens}{url}
+\usepackage{hyperref}
+\usepackage[es-nodecimaldot]{babel} % nombre de opción corregido
+\usepackage{amsthm, amssymb, amsmath, amsfonts, bbm, mathtools}
+\usepackage{csquotes}
+\usepackage{enumerate}
+\usepackage[shortlabels]{enumitem}
+\usepackage{titling}
+\usepackage{blindtext}
+\usepackage{lmodern} 
+\usepackage{float}
+\usepackage{mathrsfs}
+\usepackage[capitalise]{cleveref}
+\usepackage{caption} 
+\usepackage{graphicx}
+\usepackage{chngcntr}
+\usepackage{enumitem}
+\usepackage[ruled,vlined]{algorithm2e}
+
+\counterwithin{figure}{section}
+\numberwithin{equation}{section}
+\usepackage[vmargin=1in, hmargin=0.5in]{geometry}  
+
+\setlength{\topmargin}{-50pt}
+\setlength{\headheight}{38.23112pt}
+\setlength{\headsep}{24pt}
+
+\makeatletter
+\def\iftitle{\ifx\thetitle \empty \else }
+\def\safetitle{\iftitle{\thetitle}\fi}
+\def\headertitle{%
+    \ifdefined\hw{\hw}\fi%
+    \ifdefined\hw \iftitle{ -- }\fi%
+    \safetitle%
+}
+\def\@maketitle{%
+  \begin{center}%
+Tarea 4 - Problemas inversos - 25/03/2026 \\
+Muñoz Macías Christian Jaime 
+    \vskip 1em%
+    \hrule
+  \end{center}%
+  \par
+  \vskip 1.5em%
+}
+\makeatother
+\usepackage{amsmath}
+\usepackage{tikz}
+
+\newcommand\RADot{%
+  \mathord{%
+    \mspace{1mu}%
+    \text{\radot}%
+    \mspace{1mu}%
+  }%
+}
+
+\newcommand\radot{%
+    \tikz[line cap=round,x=1ex,y=1ex,line width=0.3pt]
+    {\draw (0,1) |- (1,0) (0.55,0) arc(0:90:0.55); \fill (0.23,0.23) circle (0.05);}%
+}
+
+%% encabezado personalizado
+\usepackage{fancyhdr}
+%% estilo plain personalizado
+\fancypagestyle{plain}{%
+    \fancyhf{} % limpia encabezado y pie de página
+    \renewcommand{\headrulewidth}{0pt}
+    \setlength{\headheight}{0pt}
+    \fancyfoot[R]{\thepage}
+}
+%% estilo para todas las páginas
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[C]{Maestría en Matemáticas Aplicadas}
+\fancyfoot[R]{\thepage}
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+%% DEFINICIONES ÚTILES %%
+%%%%%%%%%%%%%%%%%%%%%%%%
+%% definiciones matemáticas
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\Ha}{\mathcal{H}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\PP}{\mathbb{P}}
+
+\newtheorem{proposition}{Proposición}
+\newtheorem{theorem}{Teorema}
+\newtheorem{lemma}{Lema}
+\newtheorem{corollary}{Corolario}
+
+\theoremstyle{definition}
+\newtheorem{problem}{Problema}
+\newtheorem{definition}{Definición}[section]
+\newtheorem*{example}{Ejemplo}
+
+\theoremstyle{remark}
+\newtheorem*{observation}{Observación}
+\newtheorem*{note}{Nota}
+
+\newenvironment{solution}{\begin{proof}[Solución]}{\end{proof}}
+\newenvironment{dem}{\begin{proof}[Demostración]}{\end{proof}}
+\renewcommand{\qedsymbol}{$\blacksquare$}
+
+%% comandos útiles
+\newcommand{\eps}{\varepsilon}
+\newcommand{\To}{\longrightarrow}
+\newcommand{\Eu}{\varPhi}
+\newcommand{\Mapsto}{\longmapsto}
+
+%% delimitadores emparejados
+\DeclarePairedDelimiter{\set}{\{}{\}}
+\DeclarePairedDelimiter{\floor}\lfloor\rfloor
+\DeclarePairedDelimiter{\ceil}\lceil\rceil
+\DeclarePairedDelimiter{\abs}\lvert\rvert
+\DeclarePairedDelimiter{\gen}\langle\rangle
+\DeclareMathOperator{\sgn}{sgn}
+\DeclareMathOperator{\ord}{ord}
+
+%% operador
+\newcommand{\op}[1]{\operatorname{#1}}
+
+%% etiquetas del documento
+\title{Tarea 4 - Problemas inversos - 25/03/2026}
+\def\course{Materia}
+\def\university{CIMAT - MsC. Maestría en matemáticas aplicadas}
+\author{Muñoz Macías Christian Jaime}
+\def\email{\url{christian.munoz@cimat.mx}}
+\date{\today}
+
+%% permitir saltos de línea en ecuaciones
+\allowdisplaybreaks[4]
+
+\begin{document}
+
+\maketitle
+
+\section*{Ecuación de Poisson}
+Consideremos el problema de valores a la frontera para la ecuación de Poisson
+\[
+-u''(x) = f(x), \quad x \in (0, L), \quad u(0) = u(L) = 0. \tag{1}
+\]
+La solución se puede escribir como una integral usando la función de Green $G(x, \xi)$:
+\[
+u(x) = \int_{0}^{L} G(x, \xi) f(\xi) \, d\xi,
+\]
+donde la función de Green está dada por:
+\[
+G(x, \xi) = \begin{cases} 
+\dfrac{x(L - \xi)}{L}, & \text{si } x \le \xi, \\[10pt]
+\dfrac{\xi(L - x)}{L}, & \text{si } x > \xi. 
+\end{cases}
+\]
+Entonces, la solución general del problema es:
+\[
+u(x) = \int_{0}^{x} \frac{x(L-\xi)}{L} f(\xi) \, d\xi + \int_{x}^{L} \frac{\xi(L-x)}{L} f(\xi) \, d\xi. \tag{2}
+\]
+
+\section*{Ejercicios}
+
+\begin{enumerate}
+\item Implementa la cuadratura de la regla del punto medio compuesta para discretizar el problema (2) suponiendo que $L = 1$.
+
+\begin{solution}
+Definimos el paso de discretización $h$ como 
+\[
+h = \frac{1}{n}
+\]
+donde $n$ es el número de subintervalos. La cuadratura de la regla del punto medio compuesta está definida como
+\[
+\xi_i^* = \left(i - \frac{1}{2}\right)h, \quad i = 1, \dots, n
+\]
+donde $\xi_i^*$ son los puntos de evaluación para $f(\xi)$, y la integral se aproxima por
+\[
+\int_{0}^{1} g(\xi)\,d\xi \approx h\sum_{i=1}^{n} g(\xi_i^*)
+\]
+
+Aplicando esto a la ecuación (2) con $L=1$:
+\[
+u(x) = \int_{0}^{x} x(1-\xi) f(\xi) \, d\xi + \int_{x}^{1} \xi (1-x) f(\xi) \, d\xi
+\]
+
+Discretizando:
+\[
+u(x) \approx h \sum_{i: \xi_j^* \le x} x_j(1-\xi_i^*) f(\xi_i^*) + h \sum_{i: x_j^* > x} \xi_i^*(1-x_j) f(\xi_i^*)
+\]
+
+Si consideramos un conjunto de puntos de observación $x_j$ para $j = 1, \dots, m$, entonces:
+\[
+u(x_j) \approx h \sum_{i=1}^{n} G(x_j, \xi_i^*) f(\xi_i^*)
+\]
+donde
+\[
+G(x_j, \xi_i^*) = \begin{cases}
+x_j(1-\xi^*_i), & \text{si } x_j \le \xi_i^* \\
+\xi_i^*(1-x_j), & \text{si } x_j > \xi_i^*
+\end{cases}
+\]
+
+Esto se puede escribir como un sistema lineal:
+\[
+\mathbf{u} \approx A \mathbf{f}
+\]
+donde $\mathbf{u} \in \mathbb{R}^m$, $\mathbf{f} \in \mathbb{R}^n$, y la matriz $A \in \mathbb{R}^{m \times n}$ tiene elementos:
+\[
+\left[A\right]_{ji} = h \begin{cases}
+x_j(1-\xi^*_i), & \text{si } x_j \le \xi_i^* \\
+\xi_i^*(1-x_j), & \text{si } x_j > \xi_i^*
+\end{cases}
+\]
+\end{solution}
+
+\item Haz un modelo a priori de $f(x)$ mediante un Gaussian Markov Random Field usando el artículo de Bardsley como referencia. Considera que la condición de frontera de $f$ es conocida. Nota: Al construir la distribución a priori, es necesario añadir un offset (desplazamiento) a la media; de lo contrario, la media a priori será cero y el modelo no capturará adecuadamente la información disponible sobre $f$.
+
+\begin{solution}
+Se puede considerar que es un problema inverso lineal:
+\[
+b = Ax + \eta
+\]
+donde $b \in \mathbb{R}^m$ son los datos observados, $x \in \mathbb{R}^n$ es el vector desconocido, $A \in \mathbb{R}^{m \times n}$ es la matriz del modelo, y $\eta$ es ruido gaussiano.
+
+La verosimilitud está dada por:
+\[
+p(b|x) \propto \exp\left(-\frac{\lambda}{2}\|Ax - b\|^2\right)
+\]
+donde $\lambda = 1/\sigma^2$ es la precisión del ruido.
+
+Para el prior, consideramos un GMRF con media $\mu$:
+\[
+p(x) \propto \exp\left(-\frac{1}{2}(x-\mu)^T Q (x-\mu)\right)
+\]
+donde $Q$ es la matriz de precisión. En una malla uniforme con paso $h$, para un GMRF de primer orden:
+\[
+[Q]_{ij} = \frac{\delta}{h^2}
+\begin{cases}
+n_i, & i = j \\
+-1, & j \in \partial_i \\
+0, & \text{en otro caso}
+\end{cases}
+\]
+donde $\partial_i$ son los vecinos del nodo $i$, $n_i = |\partial_i|$ es el número de vecinos, y $\delta > 0$ es un parámetro de regularización.
+
+Para puntos interiores: $n_i = 2$, $Q_{ii} = 2\delta/h^2$, $Q_{i,i\pm1} = -\delta/h^2$.
+Para puntos en la frontera: $n_i = 1$, $Q_{ii} = \delta/h^2$, y solo un vecino.
+
+La distribución posterior es:
+\[
+p(x|b) \propto p(b|x)p(x) \propto \exp\left(-\frac{1}{2}(x-\mu_{\text{post}})^T \Sigma_{\text{post}}^{-1} (x-\mu_{\text{post}})\right)
+\]
+\end{solution}
+
+\item Implementa la solución bayesiana del problema inverso de determinar
+\[
+f(x) = x
+\]
+dadas observaciones ruidosas de
+\[
+u(x) = \frac{1}{6}x(1-x)(1+x)
+\]
+con ruido aditivo gaussiano con relación de señal a ruido 100.
+
+\item Calcula la media y la covarianza posterior de forma analítica.
+
+\begin{solution}
+Consideramos que 
+\[
+x|b \sim \mathcal{N}(\mu_{\text{post}}, \Sigma_{\text{post}})
+\]
+entonces $p(x|b)$ es
+\[
+p(x|b)=\frac{1}{(2\pi)^{n/2}|\Sigma_{\text{post}}|^{1/2}}\exp\left(-\frac{1}{2}(x-\mu_{\text{post}})^T \Sigma_{\text{post}}^{-1} (x-\mu_{\text{post}})\right)
+\]
+de su forma logarítmica
+\[
+\log p(x|b)=-\frac{n}{2}\log(2\pi)-\frac{1}{2}\log|\Sigma_{\text{post}}|-\frac{1}{2}(x-\mu_{\text{post}})^T \Sigma_{\text{post}}^{-1} (x-\mu_{\text{post}})
+\]
+si conocemos la proporción de $\log p(x|b)$
+\begin{align*}
+\log p(x|b) &\propto \log p(b|x)+ \log p(x) \\
+&\propto -\frac{\lambda}{2}\|Ax-b\|^2 -\frac{n}{2} \log(2\pi)+ \frac{1}{2}\log|Q| -\frac{1}{2}(x-\mu)^T Q (x-\mu)
+\end{align*}
+haciendo un reacomodo algebraico
+\begin{align*}
+\log p(x|b) &\propto -\frac{n}{2} \log(2\pi)+ \frac{1}{2}\log|Q|-\frac{\lambda}{2} \langle Ax-b, Ax-b\rangle-\frac{1}{2} \langle x-\mu,Q (x-\mu)\rangle
+\end{align*}
+la parte de interés es 
+\begin{align*}
+&=-\frac{\lambda}{2} \langle Ax-b, Ax-b\rangle-\frac{1}{2} \langle x-\mu,Q (x-\mu)\rangle \\
+&=-\frac{\lambda}{2} \left(\langle Ax, Ax\rangle-\langle Ax, b\rangle-\langle b, Ax\rangle +\langle b, b\rangle\right)-\frac{1}{2}\left(\langle x,Q (x-\mu)\rangle-\langle \mu,Q (x-\mu)\rangle \right)\\
+&=-\frac{\lambda}{2} \left( x^T A^T A x - x^T A^T b - b^T A x + b^T b \right)-\frac{1}{2}\left(x^T Q x - x^T Q \mu - \mu^T Q x +\mu^T Q \mu \right)
+\end{align*}
+como $Q$ es simétrica entonces $- x^T Q \mu - \mu^T Q x = -2 x^T Q \mu$
+\begin{align*}
+&= -\frac{1}{2} x^T (\lambda A^T A + Q) x + (\lambda b^T A + \mu^T Q) x - \frac{\lambda}{2}b^T b - \frac{1}{2}\mu^T Q \mu
+\end{align*}
+Esta expresión es una forma cuadrática en $x$:
+\[
+\log p(x|b) \propto -\frac{1}{2} x^T (\lambda A^T A + Q) x + (\lambda b^T A + \mu^T Q) x + \text{constante}
+\]
+Comparando con la forma cuadrática de una distribución normal:
+\[
+-\frac{1}{2} (x-\mu_{\text{post}})^T \Sigma_{\text{post}}^{-1} (x-\mu_{\text{post}}) = -\frac{1}{2} x^T \Sigma_{\text{post}}^{-1} x + \mu_{\text{post}}^T \Sigma_{\text{post}}^{-1} x + \text{constante}
+\]
+Identificamos:
+\[
+\Sigma_{\text{post}}^{-1} = \lambda A^T A + Q
+\]
+\[
+\mu_{\text{post}}^T \Sigma_{\text{post}}^{-1} = \lambda b^T A + \mu^T Q
+\]
+Por lo tanto:
+\[
+\Sigma_{\text{post}} = (\lambda A^T A + Q)^{-1}
+\]
+\[
+\mu_{\text{post}} = \Sigma_{\text{post}} (\lambda A^T b + Q \mu)
+\]
+\end{solution}
+
+\item Muestra tu distribución posterior y compara la media posterior numérica tomando en cuenta el tiempo integrado de autocorrelación.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.8\linewidth]{T4_g1.pdf}
+\caption{Resultados de los puntos 3, 4 y 5. Izquierda: distribución posterior con bandas de incertidumbre. Centro: cadenas MCMC para tres parámetros. Derecha: tiempo integrado de autocorrelación (IAT) y tamaño efectivo de muestra (neff) por parámetro.}
+\end{figure}
+
+La media posterior MCMC presenta un error RMS de $0.0432$ frente al valor analítico. El tiempo integrado de autocorrelación promedio es $\text{IAT} \approx 12.5$, lo que da un tamaño efectivo de muestra promedio $\text{neff} \approx 2400$ de las 30000 iteraciones totales (15000 después de burn-in), indicando una convergencia adecuada.
+
+\item Calcula la constante de normalización de manera analítica, y numéricamente de la manera siguiente:
+
+\begin{enumerate}
+\item[(a)] Usa la función \texttt{scipy.stats.gaussian\_kde} para ajustar una distribución gaussiana $G(f)$ a las muestras que obtuviste.
+
+\item[(b)] Aproxima
+\[
+\begin{aligned}
+z_0 &= \int \pi(u|f)\pi(f)\,df \\
+&= \int \frac{\pi(u|f)\pi(f)}{G(f)} G(f)\,df \\
+&\approx \frac{1}{N} \sum_{j=1}^{N} \frac{\pi(u|f_j)\pi(f_j)}{G(f_j)}
+\end{aligned}
+\]
+donde $\{f_j\}_{j=1}^N$ son muestras de $G(f)$.
+\end{enumerate}
+
+\begin{solution}
+Para la aproximación numérica, se ajustó una distribución gaussiana multivariada $G(f)$ usando la media y covarianza muestrales de las cadenas MCMC:
+\[
+\mu_{\text{mcmc}} = \frac{1}{M}\sum_{k=1}^M f_k, \quad \Sigma_{\text{mcmc}} = \frac{1}{M-1}\sum_{k=1}^M (f_k - \mu_{\text{mcmc}})(f_k - \mu_{\text{mcmc}})^T
+\]
+con $M = 15000$ muestras post-burn-in. Luego se generaron $N = 5000$ muestras $\{f_j\}_{j=1}^N \sim G(f)$ y se calculó:
+\[
+\log z_0^{\text{num}} = \log\left(\frac{1}{N}\sum_{j=1}^N \frac{\pi(u|f_j)\pi(f_j)}{G(f_j)}\right) = M + \log\left(\frac{1}{N}\sum_{j=1}^N e^{\log \pi(u|f_j) + \log \pi(f_j) - \log G(f_j) - M}\right)
+\]
+donde $M = \max_j \left(\log \pi(u|f_j) + \log \pi(f_j) - \log G(f_j)\right)$ para estabilidad numérica.
+
+El cálculo analítico se realizó usando la fórmula derivada del modelo lineal con prior gaussiano:
+\[
+z_0 = (2\pi)^{-n/2} |\Lambda|^{-1/2} \exp\left(-\frac{1}{2}(b^T \Lambda^{-1} b - \mu^T Q \mu)\right)
+\]
+donde $\Lambda = \lambda I + A Q^{-1} A^T$. Tomando logaritmo:
+\[
+\log z_0^{\text{ana}} = -\frac{n}{2}\log(2\pi) - \frac{1}{2}\log|\Lambda| - \frac{1}{2}(b^T \Lambda^{-1} b - \mu^T Q \mu)
+\]
+
+Los resultados obtenidos son:
+\begin{align*}
+\mu_{\text{post}}[:5] &= [0.095, 0.003, -0.047, -0.050, 0.223] \\
+\Sigma_{\text{post}}[:5,:5] &= \begin{bmatrix}
+0.00410 & -0.00267 & 0.00210 & 0.00394 & -0.00044 \\
+-0.00267 & 0.00433 & -0.00085 & -0.00451 & 0.00087 \\
+0.00210 & -0.00085 & 0.00189 & 0.00199 & 0.00007 \\
+0.00394 & -0.00451 & 0.00199 & 0.00654 & -0.00182 \\
+-0.00044 & 0.00087 & 0.00007 & -0.00182 & 0.00288
+\end{bmatrix} \\
+\log z_0^{\text{analítico}} &= -376.696 \\
+\log z_0^{\text{numerico}} &= -444.716 \\
+\text{diferencia} &= 68.020
+\end{align*}
+
+
+\end{solution}
+
+\end{enumerate}
+
+\end{document}

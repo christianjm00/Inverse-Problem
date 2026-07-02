@@ -1,0 +1,322 @@
+\documentclass[12pt,spanish,mexico]{article}
+\usepackage[utf8]{inputenc}
+\PassOptionsToPackage{hyphens}{url}\usepackage{hyperref}
+\usepackage[es-nodecimaldot]{babel} % nombre de opción corregido
+\usepackage{amsthm, amssymb, amsmath, amsfonts, bbm, mathtools}
+\usepackage{csquotes}
+\usepackage{enumerate}
+\usepackage[shortlabels]{enumitem}
+\usepackage{titling}
+\usepackage{blindtext}
+\usepackage{lmodern} 
+\usepackage{float}
+\usepackage{mathrsfs}
+\usepackage[capitalise]{cleveref}
+\usepackage{caption} 
+\usepackage{graphicx}
+\usepackage{chngcntr}
+\counterwithin{figure}{section}
+\numberwithin{equation}{section}
+\usepackage[vmargin=1in, hmargin=0.5in]{geometry}  
+
+\setlength{\topmargin}{-50pt}
+\setlength{\headheight}{38.23112pt}
+\setlength{\headsep}{24pt}
+
+\makeatletter
+\def\iftitle{\ifx\thetitle \empty \else }
+\def\safetitle{\iftitle{\thetitle}\fi}
+\def\headertitle{%
+    \ifdefined\hw{\hw}\fi%
+    \ifdefined\hw \iftitle{ -- }\fi%
+    \safetitle%
+}
+\def\@maketitle{%
+  \begin{center}%
+Tarea 2 - Problemas inversos - 25/02/2026 \\
+Muñoz Macías Christian Jaime 
+    \vskip 1em%
+    \hrule
+  \end{center}%
+  \par
+  \vskip 1.5em%
+}
+\makeatother
+\usepackage{amsmath}
+\usepackage{tikz}
+
+\newcommand\RADot{%
+  \mathord{%
+    \mspace{1mu}%
+    \text{\radot}%
+    \mspace{1mu}%
+  }%
+}
+
+\newcommand\radot{%
+    \tikz[line cap=round,x=1ex,y=1ex,line width=0.3pt]
+    {\draw (0,1) |- (1,0) (0.55,0) arc(0:90:0.55); \fill (0.23,0.23) circle (0.05);}%
+}
+
+%% encabezado personalizado
+\usepackage{fancyhdr}
+%% estilo plain personalizado
+\fancypagestyle{plain}{%
+    \fancyhf{} % limpia encabezado y pie de página
+    \renewcommand{\headrulewidth}{0pt}
+    \setlength{\headheight}{0pt}
+    \fancyfoot[R]{\thepage}
+}
+%% estilo para todas las páginas
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[C]{Maestría en Matemáticas Aplicadas}
+\fancyfoot[R]{\thepage}
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+%% DEFINICIONES ÚTILES %%
+%%%%%%%%%%%%%%%%%%%%%%%%
+%% definiciones matemáticas
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\Ha}{\mathcal{H}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\PP}{\mathbb{P}}
+
+\newtheorem{proposition}{Proposición}
+\newtheorem{theorem}{Teorema}
+\newtheorem{lemma}{Lema}
+\newtheorem{corollary}{Corolario}
+
+\theoremstyle{definition}
+\newtheorem{problem}{Problema}
+\newtheorem{definition}{Definición}[section]
+\newtheorem*{example}{Ejemplo}
+
+\theoremstyle{remark}
+\newtheorem*{observation}{Observación}
+\newtheorem*{note}{Nota}
+
+\newenvironment{solution}{\begin{proof}[Solución]}{\end{proof}}
+\newenvironment{dem}{\begin{proof}[Demostración]}{\end{proof}}
+\renewcommand{\qedsymbol}{$\blacksquare$}
+
+%% comandos útiles
+\newcommand{\eps}{\varepsilon}
+\newcommand{\To}{\longrightarrow}
+\newcommand{\Eu}{\varPhi}
+\newcommand{\Mapsto}{\longmapsto}
+
+%% delimitadores emparejados
+\DeclarePairedDelimiter{\set}{\{}{\}}
+\DeclarePairedDelimiter{\floor}\lfloor\rfloor
+\DeclarePairedDelimiter{\ceil}\lceil\rceil
+\DeclarePairedDelimiter{\abs}\lvert\rvert
+\DeclarePairedDelimiter{\gen}\langle\rangle
+\DeclareMathOperator{\sgn}{sgn}
+\DeclareMathOperator{\ord}{ord}
+
+%% operador
+\newcommand{\op}[1]{\operatorname{#1}}
+
+%% etiquetas del documento
+\title{Tarea 2 - Problemas inversos - 25/02/2026}
+\def\course{Materia}
+\def\university{CIMAT - MsC. Maestría en matemáticas aplicadas}
+\author{Muñoz Macías Christian Jaime}
+\def\email{\url{christian.munoz@cimat.mx}}
+\date{\today}
+
+%% permitir saltos de línea en ecuaciones
+\allowdisplaybreaks[4]
+
+\begin{document}
+
+\maketitle
+
+\section*{1. Iteración de Landweber}
+
+Sea \( H \) un espacio de Hilbert. Decimos que un operador (no necesariamente lineal) \( T : H \to H \) es una \textit{contracción} si se cumple
+\[
+\|Tx_1 - Tx_2\| \le \kappa \|x_1 - x_2\|
+\]
+para algún \( \kappa \le 1 \). Decimos que un vector \( x \in H \) es un \textit{punto fijo} de \( T \) si se cumple
+\[
+Tx = x.
+\]
+
+\begin{proposicion}
+Sea \( H \) un espacio de Hilbert, y sea \( S \subset H \) un conjunto cerrado invariante bajo la acción de \( T \), es decir, \( x \in S \) implica \( Tx \in S \). Supongamos que \( T \) es una contracción en \( S \), entonces existe un único punto fijo \( x \in S \) tal que \( x = Tx \). El punto fijo puede hallarse mediante la iteración
+\[
+x = \lim_{k \to \infty} x_{k+1} = Tx_k
+\]
+para \( x_0 \in S \) arbitrario.
+\end{proposicion}
+
+Sea \( K : H_1 \to H_2 \) un operador lineal compacto. Dado el problema inverso \( Kx = y \), consideremos la ecuación diferencial
+\[
+\dot{x} = K^*y - K^*Kx
+\]
+y la discretización
+\[
+x_{k+1} = x_k + \beta(K^*y - K^*Kx_k). \tag{1}
+\]
+
+\begin{enumerate}
+    \item[(a)] Muestre que la iteración (de Landweber) (1) es una contracción para una elección adecuada de \( \beta \) suponiendo que la dimensión del rango de \( K \) es finito.
+    \begin{solution}
+        Sea $a,b \in S$ proponiendo como un
+        \[
+        T(x)=x+\beta(K^* y - K^* K x)
+        \]
+        evaluando esto puntos en T, sacando su diferencia
+        \begin{align*}
+        T(b)-T(a) &=b+\beta(K^* y - K^* K b)-(a+\beta(K^* y - K^* K a)),\\
+         &=b-a+\beta(K^* K a - K^* K b), \\
+         &=b-a-\beta K^* K (b - a), \\
+         &=(I-\beta K^* K)(b - a), \\
+        \|T(b)-T(a)\|^2 &=\|(I-\beta K^* K)(b - a)\|^2,\\
+        \end{align*}
+        Sea ${v_i}$ un sistema ortonormal que $K^* K v_i=\lambda_i^2 v_i$, $\lambda_i^2 >0$
+        \begin{align*}
+        \|T(b)-T(a)\|^2 &=\|(I-\beta K^* K)(b - a)\|^2,\\
+         &=\|(I-\beta K^* K)v_i \langle v_i, (b - a) \rangle \|^2,\\
+         &=\sum_{j=1}^N (1 -\beta  \lambda_j^2)^2 \langle v_j, b-a \rangle^2 \\
+         & \leq \sum_{j=1}^N \kappa^2  \langle v_j, b-a \rangle^2 \\\
+         & \leq \kappa^2  \| b-a \|^2 \\
+        \end{align*}
+        donde 
+        \[
+        \kappa^2 = \max_{1 \leq j \leq N} (1 -\beta  \lambda_j^2)^2
+        \]
+        para que sea una contracción se necesita que $\kappa < 1$, si sustituimos $\beta \lambda_j^2$ por $0$ y $2$ se obtiene que 
+        $\kappa=1$ entonces se necesita que $0 < \beta < \frac{2}{\lambda_{max}^2}$. Con anterior eleccion se cumple que 
+        \[\|T(b)-T(a)\| \leq \kappa \|b-a\| \]
+        por lo tanto $T$ es una contracción.
+        
+    \end{solution}
+    \item[(b)] Aplique el método de la iteración de Landweber para resolver el problema de deconvolución de la Tarea 1 con principio de discrepancia.
+  
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.4\linewidth]{C:/Users/chris/OneDrive/Escritorio/python/CIMAT/problemas inversos/Tarea_2/Tarea_2_1b_n10_SNR10.pdf}
+    \caption{iteración de Landweber ($n=10$, $\mathrm{SNR}=10$)}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.4\linewidth]{C:/Users/chris/OneDrive/Escritorio/python/CIMAT/problemas inversos/Tarea_2/Tarea_2_1b_n10_SNR20.pdf}
+    \caption{iteración de Landweber($n=10$, $\mathrm{SNR}=20$)}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.4\linewidth]{C:/Users/chris/OneDrive/Escritorio/python/CIMAT/problemas inversos/Tarea_2/Tarea_2_1b_n10_SNR100.pdf}
+    \caption{iteración de Landweber ($n=10$, $\mathrm{SNR}=100$)}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.4\linewidth]{C:/Users/chris/OneDrive/Escritorio/python/CIMAT/problemas inversos/Tarea_2/Tarea_2_1b_n50_SNR10.pdf}
+    \caption{iteración de Landweber ($n=50$, $\mathrm{SNR}=10$)}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.4\linewidth]{C:/Users/chris/OneDrive/Escritorio/python/CIMAT/problemas inversos/Tarea_2/Tarea_2_1b_n50_SNR20.pdf}
+    \caption{iteración de Landweber ($n=50$, $\mathrm{SNR}=20$)}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.4\linewidth]{C:/Users/chris/OneDrive/Escritorio/python/CIMAT/problemas inversos/Tarea_2/Tarea_2_1b_n50_SNR100.pdf}
+    \caption{iteración de Landweber ($n=50$, $\mathrm{SNR}=100$)}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.4\linewidth]{C:/Users/chris/OneDrive/Escritorio/python/CIMAT/problemas inversos/Tarea_2/Tarea_2_1b_n100_SNR10.pdf}
+    \caption{iteración de Landweber ($n=100$, $\mathrm{SNR}=10$)}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.4\linewidth]{C:/Users/chris/OneDrive/Escritorio/python/CIMAT/problemas inversos/Tarea_2/Tarea_2_1b_n100_SNR20.pdf}
+    \caption{iteración de Landweber ($n=100$, $\mathrm{SNR}=20$)}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.4\linewidth]{C:/Users/chris/OneDrive/Escritorio/python/CIMAT/problemas inversos/Tarea_2/Tarea_2_1b_n100_SNR100.pdf}
+    \caption{iteración de Landweber ($n=100$, $\mathrm{SNR}=100$)}
+\end{figure}
+   
+\end{enumerate}
+
+\section*{2. Algoritmo: Método de Kaczmarz}
+
+El método de Kaczmarz es un algoritmo iterativo para resolver el sistema lineal \( Ax = b \).
+
+\textbf{Pasos:}
+\begin{enumerate}
+    \item[(a)] Inicializar con un valor arbitrario \( x^{(0)} \).
+    \item[(b)] Para \( k = 0, 1, 2, \ldots \) iterar:
+    \begin{itemize}
+        \item Seleccionar una fila \( a_i^T \) de \( A \) de manera cíclica o aleatoria.
+        \item Actualizar:
+        \[
+        x^{(k+1)} = x^{(k)} + \frac{b_i - a_i^T x^{(k)}}{\|a_i\|^2} a_i. \tag{2}
+        \]
+    \end{itemize}
+\end{enumerate}
+
+Resuelve el sistema de ecuaciones lineales asociado al problema de deconvolución en la Tarea 1 mediante el algoritmo Kaczmarz con principio de discrepancia.
+
+    \begin{figure}[H]
+    \centering
+    \includegraphics[width=0.4\linewidth]{C:/Users/chris/OneDrive/Escritorio/python/CIMAT/problemas inversos/Tarea_2/Tarea_2_2_n10_SNR10.pdf}
+    \caption{iteración de Landweber ($n=10$, $\mathrm{SNR}=10$)}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.4\linewidth]{C:/Users/chris/OneDrive/Escritorio/python/CIMAT/problemas inversos/Tarea_2/Tarea_2_2_n10_SNR20.pdf}
+    \caption{iteración de Landweber($n=10$, $\mathrm{SNR}=20$)}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.4\linewidth]{C:/Users/chris/OneDrive/Escritorio/python/CIMAT/problemas inversos/Tarea_2/Tarea_2_2_n10_SNR100.pdf}
+    \caption{iteración de Landweber ($n=10$, $\mathrm{SNR}=100$)}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.4\linewidth]{C:/Users/chris/OneDrive/Escritorio/python/CIMAT/problemas inversos/Tarea_2/Tarea_2_2_n50_SNR10.pdf}
+    \caption{iteración de Landweber ($n=50$, $\mathrm{SNR}=10$)}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.4\linewidth]{C:/Users/chris/OneDrive/Escritorio/python/CIMAT/problemas inversos/Tarea_2/Tarea_2_2_n50_SNR20.pdf}
+    \caption{iteración de Landweber ($n=50$, $\mathrm{SNR}=20$)}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.4\linewidth]{C:/Users/chris/OneDrive/Escritorio/python/CIMAT/problemas inversos/Tarea_2/Tarea_2_2_n50_SNR100.pdf}
+    \caption{iteración de Landweber ($n=50$, $\mathrm{SNR}=100$)}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.4\linewidth]{C:/Users/chris/OneDrive/Escritorio/python/CIMAT/problemas inversos/Tarea_2/Tarea_2_2_n100_SNR10.pdf}
+    \caption{iteración de Landweber ($n=100$, $\mathrm{SNR}=10$)}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.4\linewidth]{C:/Users/chris/OneDrive/Escritorio/python/CIMAT/problemas inversos/Tarea_2/Tarea_2_2_n100_SNR20.pdf}
+    \caption{iteración de Landweber ($n=100$, $\mathrm{SNR}=20$)}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.4\linewidth]{C:/Users/chris/OneDrive/Escritorio/python/CIMAT/problemas inversos/Tarea_2/Tarea_2_2_n100_SNR100.pdf}
+    \caption{iteración de Landweber ($n=100$, $\mathrm{SNR}=100$)}
+\end{figure}
+
+\section*{3. Opcional}
+
+Usa la librería \url{https://scikit-image.org/} para formar un sinograma de la figura \textit{sheep logan phantom} (en la librería) en un arreglo de ángulos de tu elección. Reconstruye la imagen resolviendo un sistema de ecuaciones resultante mediante el algoritmo Kaczmarz con principio de discrepancia. Este problema requiere especial atención para formar el sistema de ecuaciones lineales.
+
+\vspace{0.5cm}
+
+
+\end{document}
