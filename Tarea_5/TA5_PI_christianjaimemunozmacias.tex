@@ -1,0 +1,620 @@
+\documentclass[12pt,spanish,mexico]{article}
+\usepackage[utf8]{inputenc}
+\PassOptionsToPackage{hyphens}{url}
+\usepackage{hyperref}
+\usepackage[es-nodecimaldot]{babel} % nombre de opción corregido
+\usepackage{amsthm, amssymb, amsmath, amsfonts, bbm, mathtools}
+\usepackage{csquotes}
+\usepackage{enumerate}
+\usepackage[shortlabels]{enumitem}
+\usepackage{titling}
+\usepackage{blindtext}
+\usepackage{lmodern} 
+\usepackage{float}
+\usepackage{mathrsfs}
+\usepackage[capitalise]{cleveref}
+\usepackage{caption} 
+\usepackage{graphicx}
+\usepackage{chngcntr}
+\usepackage{enumitem}    
+\usepackage{cleveref} 
+\usepackage[ruled,vlined]{algorithm2e}
+
+\counterwithin{figure}{section}
+\numberwithin{equation}{section}
+\usepackage[vmargin=1in, hmargin=0.5in]{geometry}  
+
+\setlength{\topmargin}{-50pt}
+\setlength{\headheight}{38.23112pt}
+\setlength{\headsep}{24pt}
+
+\makeatletter
+\def\iftitle{\ifx\thetitle \empty \else }
+\def\safetitle{\iftitle{\thetitle}\fi}
+\def\headertitle{%
+    \ifdefined\hw{\hw}\fi%
+    \ifdefined\hw \iftitle{ -- }\fi%
+    \safetitle%
+}
+\def\@maketitle{%
+  \begin{center}%
+Tarea 5 - Problemas inversos - 15/04/2026 \\
+Muñoz Macías Christian Jaime 
+    \vskip 1em%
+    \hrule
+  \end{center}%
+  \par
+  \vskip 1.5em%
+}
+\makeatother
+\usepackage{amsmath}
+\usepackage{tikz}
+
+\newcommand\RADot{%
+  \mathord{%
+    \mspace{1mu}%
+    \text{\radot}%
+    \mspace{1mu}%
+  }%
+}
+
+\newcommand\radot{%
+    \tikz[line cap=round,x=1ex,y=1ex,line width=0.3pt]
+    {\draw (0,1) |- (1,0) (0.55,0) arc(0:90:0.55); \fill (0.23,0.23) circle (0.05);}%
+}
+
+%% encabezado personalizado
+\usepackage{fancyhdr}
+%% estilo plain personalizado
+\fancypagestyle{plain}{%
+    \fancyhf{} % limpia encabezado y pie de página
+    \renewcommand{\headrulewidth}{0pt}
+    \setlength{\headheight}{0pt}
+    \fancyfoot[R]{\thepage}
+}
+%% estilo para todas las páginas
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[C]{Maestría en Matemáticas Aplicadas}
+\fancyfoot[R]{\thepage}
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+%% DEFINICIONES ÚTILES %%
+%%%%%%%%%%%%%%%%%%%%%%%%
+%% definiciones matemáticas
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\Ha}{\mathcal{H}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\PP}{\mathbb{P}}
+
+\newtheorem{proposition}{Proposición}
+\newtheorem{theorem}{Teorema}
+\newtheorem{lemma}{Lema}
+\newtheorem{corollary}{Corolario}
+
+\theoremstyle{definition}
+\newtheorem{problem}{Problema}
+\newtheorem{definition}{Definición}[section]
+\newtheorem*{example}{Ejemplo}
+
+\theoremstyle{remark}
+\newtheorem*{observation}{Observación}
+\newtheorem*{note}{Nota}
+
+\newenvironment{solution}{\begin{proof}[Solución]}{\end{proof}}
+\newenvironment{dem}{\begin{proof}[Demostración]}{\end{proof}}
+\renewcommand{\qedsymbol}{$\blacksquare$}
+
+%% comandos útiles
+\newcommand{\eps}{\varepsilon}
+\newcommand{\To}{\longrightarrow}
+\newcommand{\Eu}{\varPhi}
+\newcommand{\Mapsto}{\longmapsto}
+
+%% delimitadores emparejados
+\DeclarePairedDelimiter{\set}{\{}{\}}
+\DeclarePairedDelimiter{\floor}\lfloor\rfloor
+\DeclarePairedDelimiter{\ceil}\lceil\rceil
+\DeclarePairedDelimiter{\abs}\lvert\rvert
+\DeclarePairedDelimiter{\gen}\langle\rangle
+\DeclareMathOperator{\sgn}{sgn}
+\DeclareMathOperator{\ord}{ord}
+
+%% operador
+\newcommand{\op}[1]{\operatorname{#1}}
+
+%% etiquetas del documento
+\title{Tarea 5 - Problemas inversos - 15/04/2026}
+\def\course{Materia}
+\def\university{CIMAT - MsC. Maestría en matemáticas aplicadas}
+\author{Muñoz Macías Christian Jaime}
+\def\email{\url{christian.munoz@cimat.mx}}
+\date{\today}
+
+%% permitir saltos de línea en ecuaciones
+\allowdisplaybreaks[4]
+
+\begin{document}
+
+\maketitle
+
+
+\section*{Modelo de una pandemia de influenza}
+
+Dada una población de tamaño $N$, el contagio de influenza durante un brote pandémico está gobernado por el sistema de ecuaciones diferenciales
+
+\[
+\begin{align*}
+\frac{dS}{dt} &= -\beta \frac{I}{N} S, \\
+\frac{dE}{dt} &= \beta \frac{I}{N} S - \sigma E, \\
+\frac{dI}{dt} &= \sigma E - \gamma I, \\
+\frac{dR}{dt} &= \gamma I,
+\end{align*}
+\]
+
+con condiciones iniciales
+
+\[
+\begin{align*}
+S(0) &= S_0 \\
+E(0) &= E_0 \\
+I(0) &= I_0 \\
+R(0) &= R_0
+\end{align*}
+\]
+
+Las variables $S(t)$, $E(t)$, $I(t)$ y $R(t)$ denotan el número de personas susceptibles, latentes, infecciosas, y removidas respectivamente al tiempo $t$. Aquí, removidos significa que las personas no participan en el contagio por cualquier razón: aislamiento, muerte, recuperación, etc. El número diario de nuevos casos $c_i$ en el día $i$ está dado por
+
+\[
+c_i = q \int_{t_{i-1}}^{t_i} \sigma E(s) \, ds, \tag{3}
+\]
+
+donde $[t_{i-1}, t_i]$ es el plazo entre dos tiempos de observación, que en el presente caso es igual a un día. Los parámetros y condiciones iniciales del modelo (1)-(2) son como se indica en la siguiente tabla:
+
+\begin{center}
+\begin{tabular}{|l|l|c|}
+\hline
+\textbf{Nombre} & \textbf{Significado} & \textbf{Valor} \\
+\hline
+$\sigma$ & Tasa de latencia & $1/3$ días$^{-1}$ \\
+\hline
+$\gamma$ & Tasa de recuperación & $1/5$ días$^{-1}$ \\
+\hline
+$q$ & probabilidad de observación de una infección & $0.5$ \\
+\hline
+$\beta$ & Tasa de contacto & por inferir \\
+\hline
+$S_0$ & Número inicial de susceptibles & por inferir \\
+\hline
+$E_0$ & Número inicial de latentes & por inferir \\
+\hline
+$I_0$ & Número inicial de infecciosos & por inferir \\
+\hline
+$R_0$ & Número inicial de removidos & por inferir \\
+\hline
+\end{tabular}
+\end{center}
+
+Resuelve un problema de asimilación de datos tomando en cuenta lo siguiente:
+
+\begin{enumerate}
+\item Suponemos $N = 550,000$.
+\item La condición $N = S_0 + E_0 + I_0 + R_0$ reduce en uno el número de parámetros por estimar.
+\item Consideramos el archivo de datos \texttt{pandemic\_influenza\_SF\_1918.xls} que se encuentra en la carpeta de Dropbox. Estos datos corresponden a la primera ola de la pandemia de influenza de 1918 en San Francisco, California, Estados Unidos.
+\item Usa el método de tu elección para estimar los parámetros del sistema dinámico (1)-(2) con el modelo de observación (3).
+\item Interpreta las condiciones iniciales en términos de cuanta gente se aisló al inicio de la pandemia.
+\end{enumerate}
+
+\begin{solution}
+
+El sistema dinámico se escribe como
+\[
+\frac{dy}{dt}=f(y),
+\qquad
+y=
+\begin{pmatrix}
+S\\E\\I\\R
+\end{pmatrix},
+\]
+
+con
+\[
+f(y)=
+\begin{pmatrix}
+-\beta \frac{SI}{N}\\
+\beta \frac{SI}{N}-\sigma E\\
+\sigma E-\gamma I\\
+\gamma I
+\end{pmatrix}.
+\]
+
+Por el teorema fundamental del cálculo,
+\[
+y(t+h)-y(t)=\int_t^{t+h} f(y(\tau))\,d\tau.
+\]
+
+
+Se realiza expansión de Taylor en $y(\tau)$ alrededor de $y(t)$:
+
+\[
+f(y(\tau))
+=
+f(y(t)) + J(y(t))\big(y(\tau)-y(t)\big) + O(\|y(\tau)-y(t)\|^2),
+\]
+
+donde el Jacobiano es
+\[
+J(y)=\frac{\partial f}{\partial y}(y)\in\mathbb{R}^{4\times 4}.
+\]
+
+Explícitamente:
+\[
+J(y)=
+\begin{pmatrix}
+-\beta \frac{I}{N} & 0 & -\beta \frac{S}{N} & 0 \\
+\beta \frac{I}{N} & -\sigma & \beta \frac{S}{N} & 0 \\
+0 & \sigma & -\gamma & 0 \\
+0 & 0 & \gamma & 0
+\end{pmatrix}.
+\]
+
+Se usa expansión de Taylor en el tiempo:
+\[
+y(\tau)=y(t)+(\tau-t)y'(t)+O((\tau-t)^2),
+\]
+
+y como $y'(t)=f(y(t))$, entonces
+\[
+y(\tau)-y(t)=(\tau-t)f(y(t))+O(h^2).
+\]
+
+
+Sustituyendo:
+
+\[
+f(y(\tau))
+=
+f(y(t)) + (\tau-t)J(y(t))f(y(t)) + O(h^2).
+\]
+
+Entonces
+\[
+\int_t^{t+h} f(y(\tau))\,d\tau
+=
+\int_t^{t+h} f(y(t))\,d\tau
++
+\int_t^{t+h} (\tau-t)J(y(t))f(y(t))\,d\tau
++
+O(h^3).
+\]
+
+
+Primera integral:
+\[
+\int_t^{t+h} f(y(t))\,d\tau = h f(y(t)).
+\]
+
+Segunda integral:
+\[
+\int_t^{t+h} (\tau-t)\,d\tau = \frac{h^2}{2}.
+\]
+
+Por tanto:
+\[
+\int_t^{t+h} f(y(\tau))\,d\tau
+=
+h f(y(t))
++
+\frac{h^2}{2}J(y(t))f(y(t))
++
+O(h^3).
+\]
+
+
+\[
+y(t+h)-y(t)
+=
+h f(y(t))
++
+\frac{h^2}{2}J(y(t))f(y(t))
++
+O(h^3).
+\]
+
+Equivalente en forma discreta:
+\[
+y_{n+1}
+=
+y_n
++
+h f(y_n)
++
+\frac{h^2}{2}J(y_n)f(y_n).
+\]
+
+El número de casos observados por día se modela como:
+\[
+c_i = q \int_{t_{i-1}}^{t_i} \sigma E(s)\,ds.
+\]
+
+Definimos el modelo predictivo:
+\[
+c_i^{mod}(\theta) = q \int_{t_{i-1}}^{t_i} \sigma E_{mod}(s;\theta)\,ds,
+\]
+donde
+\[
+\theta = (\beta, S_0, E_0, I_0, R_0).
+\]
+
+Se conoce que
+\[
+N = S_0 + E_0 + I_0 + R_0,
+\]
+entonces:
+\[
+S_0 = N - (E_0 + I_0 + R_0).
+\]
+
+Por lo tanto, los parámetros a estimar son:
+\[
+\theta = (\beta, E_0, I_0, R_0).
+\]
+
+Se introduce la reparametrización:
+\[
+\theta = (\beta, u_1, u_2, u_3), \qquad u_i > 0,
+\]
+y se define
+\[
+D = 1 + u_1 + u_2 + u_3.
+\]
+
+Entonces:
+\[
+S_0 = \frac{N}{D}, \quad
+E_0 = \frac{N u_1}{D}, \quad
+I_0 = \frac{N u_2}{D}, \quad
+R_0 = \frac{N u_3}{D}.
+\]
+
+Con esta parametrización se satisface:
+\[
+S_0 + E_0 + I_0 + R_0 = N, \qquad S_0,E_0,I_0,R_0 \ge 0.
+\]
+
+Por lo tanto:
+\[
+c_i^{mod}(\theta) = c_i^{mod}(\beta, u_1, u_2, u_3).
+\]
+
+Se asume ruido gaussiano:
+\[
+c_i = c_i^{mod}(\theta) + \varepsilon_i,
+\qquad
+\varepsilon_i \sim \mathcal{N}(0,\eta).
+\]
+
+La verosimilitud es:
+\[
+p(c \mid \theta)
+\propto
+\exp\left(
+-\frac{1}{2\eta}\sum_{i=1}^T (c_i - c_i^{mod}(\theta))^2
+\right).
+\]
+
+Su versión logarítmica:
+\[
+\log p(c \mid \theta)
+=
+-\frac{1}{2\eta}\sum_{i=1}^T (c_i - c_i^{mod}(\theta))^2 + C.
+\]
+
+Para la priori se usan variables positivas mediante transformación logarítmica:
+\[
+\tilde{\theta} = (\log \beta, \log u_1, \log u_2, \log u_3).
+\]
+
+Se asume:
+\[
+\tilde{\theta} \sim \mathcal{N}(\mu, \Sigma),
+\]
+es decir:
+\[
+p(\tilde{\theta})
+\propto
+\exp\left(
+-\frac{1}{2}(\tilde{\theta}-\mu)^T \Sigma^{-1} (\tilde{\theta}-\mu)
+\right).
+\]
+
+Por cambio de variable:
+\[
+p(\theta)
+=
+p(\tilde{\theta})
+\left|
+\det\left(\frac{\partial \tilde{\theta}}{\partial \theta}\right)
+\right|.
+\]
+
+Como \(\tilde{\theta}_i = \log \theta_i\), el Jacobiano es:
+\[
+J =
+\begin{pmatrix}
+\frac{1}{\beta} & 0 & 0 & 0 \\
+0 & \frac{1}{u_1} & 0 & 0 \\
+0 & 0 & \frac{1}{u_2} & 0 \\
+0 & 0 & 0 & \frac{1}{u_3}
+\end{pmatrix},
+\qquad
+|\det(J)| = \frac{1}{\beta u_1 u_2 u_3}.
+\]
+
+Entonces:
+\[
+\log p(\theta)
+=
+\log p(\tilde{\theta})
+-
+\sum_{i=1}^4 \tilde{\theta}_i.
+\]
+
+Finalmente:
+\[
+\log p(\theta)
+=
+-\frac{1}{2}(\tilde{\theta}-\mu)^T \Sigma^{-1} (\tilde{\theta}-\mu)
+-\sum_{i=1}^4 \tilde{\theta}_i + C.
+\]
+
+La posterior queda:
+\[
+p(\theta \mid c) \propto p(c \mid \theta)\, p(\theta),
+\]
+
+y su versión logarítmica:
+\[
+\log p(\theta \mid c)
+=
+-\frac{1}{2\eta}\sum_{i=1}^T (c_i - c_i^{mod}(\theta))^2
+-\frac{1}{2}(\tilde{\theta}-\mu)^T \Sigma^{-1} (\tilde{\theta}-\mu)
+-\sum_{i=1}^4 \tilde{\theta}_i + C.
+\]
+El parámetro \(\eta > 0\), el cual representa la varianza del error en las observaciones y del desajuste del modelo entre los datos y la solución numérica del sistema. Se asume ruido gaussiano:
+\[
+\varepsilon_i \sim \mathcal{N}(0,\eta).
+\]
+
+Por lo tanto, el modelo de observación se escribe como:
+\[
+c_i = c_i^{mod}(\theta) + \varepsilon_i.
+\]
+
+El parámetro \(\eta\) controla la magnitud del error cuadrático medio entre datos y modelo:
+\[
+\eta \approx \mathbb{V}ar(c_i).
+\]
+
+La matriz de covarianza \(\Sigma\) del prior en el espacio transformado se propone como:
+\[
+\Sigma =0.01 \mathrm{diag}\left(1,1,1,1\right).
+\]
+\section{Resultados}
+
+Los parámetros estimados mediante MCMC son:
+
+\[
+\begin{aligned}
+\beta &= 5.4003 \pm 0.0423 \\
+u_E &= 0.0126 \pm 0.0052 \\
+u_I &= 0.4324 \pm 0.0943 \\
+u_R &= 0.0104 \pm 0.0070
+\end{aligned}
+\]
+
+donde las incertidumbres corresponden a dos desviaciones estándar (\( \pm 2\sigma \)).
+
+\subsection{Evolución de las cadenas MCMC}
+
+A continuación se muestra la trayectoria de la cadena para el parámetro de transmisión \( \beta \). Las líneas discontinuas y punteadas indican la media y la banda de \( \pm 2\sigma \), respectivamente.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.6\linewidth]{C:/Users/chris/OneDrive/Escritorio/python/CIMAT/problemas inversos/Tarea_5/Cadena MCMC - beta.pdf}
+    \caption{Evolución de la cadena MCMC para \( \beta \). La línea horizontal representa la media posterior.}
+\end{figure}
+
+Las siguientes figuras presentan las cadenas correspondientes a los parámetros de condiciones iniciales \( u_E \), \( u_I \) y \( u_R \).
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.6\linewidth]{C:/Users/chris/OneDrive/Escritorio/python/CIMAT/problemas inversos/Tarea_5/Cadena MCMC - u_E.pdf}
+    \caption{Evolución de la cadena MCMC para \( u_E \).}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.6\linewidth]{C:/Users/chris/OneDrive/Escritorio/python/CIMAT/problemas inversos/Tarea_5/Cadena MCMC - u_I.pdf}
+    \caption{Evolución de la cadena MCMC para \( u_I \).}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.6\linewidth]{C:/Users/chris/OneDrive/Escritorio/python/CIMAT/problemas inversos/Tarea_5/Cadena MCMC - u_R.pdf}
+    \caption{Evolución de la cadena MCMC para \( u_R \).}
+\end{figure}
+
+\subsection{Distribuciones posteriores}
+
+La figura muestra las distribuciones marginales y las correlaciones entre pares de parámetros. Los histogramas en la diagonal representan las densidades posteriores marginales, mientras que los gráficos de dispersión fuera de la diagonal ilustran las correlaciones posteriores.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.6\linewidth]{C:/Users/chris/OneDrive/Escritorio/python/CIMAT/problemas inversos/Tarea_5/distribucion_pa.pdf}
+    \caption{Matriz de distribuciones posteriores. Diagonal: densidades marginales. Fuera de diagonal: correlaciones entre parámetros.}
+\end{figure}
+
+\subsection{Dinámica de los compartimentos epidemiológicos}
+
+Las siguientes figuras presentan la evolución temporal de los compartimentos del modelo SEIR: susceptibles, expuestos, infectados y recuperados. Las bandas sombreadas representan el intervalo de incertidumbre del 95\% (\( \pm 2\sigma \)) obtenido a partir de las muestras posteriores.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.6\linewidth]{C:/Users/chris/OneDrive/Escritorio/python/CIMAT/problemas inversos/Tarea_5/Susceptibles.pdf}
+    \caption{Evolución de la población susceptible \( S(t) \) con banda de incertidumbre del 95\%.}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.6\linewidth]{C:/Users/chris/OneDrive/Escritorio/python/CIMAT/problemas inversos/Tarea_5/Expuestos.pdf}
+    \caption{Evolución de la población expuesta \( E(t) \) con banda de incertidumbre del 95\%.}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.6\linewidth]{C:/Users/chris/OneDrive/Escritorio/python/CIMAT/problemas inversos/Tarea_5/Infectados.pdf}
+    \caption{Evolución de la población infectada \( I(t) \) con banda de incertidumbre del 95\%.}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.6\linewidth]{C:/Users/chris/OneDrive/Escritorio/python/CIMAT/problemas inversos/Tarea_5/Recuperados.pdf}
+    \caption{Evolución de la población recuperada \( R(t) \) con banda de incertidumbre del 95\%.}
+\end{figure}
+
+\subsection{Incidencia modelada vs. datos observados}
+
+La siguiente figura compara la incidencia reportada (puntos rojos) con la predicción del modelo SEIR (línea azul). La banda sombreada representa la incertidumbre del 95\% proveniente de la propagación de incertidumbre de los parámetros.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.6\linewidth]{C:/Users/chris/OneDrive/Escritorio/python/CIMAT/problemas inversos/Tarea_5/Incidencia - Modelo SEIR con incertidumbre.pdf}
+    \caption{Incidencia semanal: comparación entre datos observados y predicción del modelo. La banda sombreada indica el intervalo de incertidumbre del 95\%.}
+\end{figure}
+
+\subsection{Discusión}
+
+Los resultados presentados exhiben una sensibilidad considerable a diversos aspectos del procedimiento de estimación:
+
+\begin{enumerate}
+    \item \textbf{Configuración del muestreador MCMC}: el tamaño de paso y la longitud de la cadena afectan la convergencia y la mezcla de las muestras.
+    \item \textbf{Condiciones iniciales}: el punto de partida de los parámetros influye en la región del espacio paramétrico explorada.
+    \item \textbf{Distribución a priori}: la elección de la media \( \mu \) y la matriz de covarianza \( \Sigma \) de la distribución prior tiene un impacto significativo en las estimaciones finales.
+    \item \textbf{Método de optimización}: el uso de diferentes algoritmos de optimización para obtener el punto inicial puede conducir a resultados distintos.
+\end{enumerate}
+
+Esta sensibilidad sugiere que el problema de estimación es inherentemente no lineal y posiblemente mal condicionado. Las principales fuentes de incertidumbre son:
+
+\begin{itemize}
+    \item \textbf{Falta de información identificable} en los datos observados para determinar de manera única todos los parámetros del modelo.
+    \item \textbf{Especificación de la verosimilitud}: la elección de \( \eta \) (varianza del error) debe revisarse, ya que un valor fijo puede no capturar adecuadamente la heterocedasticidad de los datos.
+    \item \textbf{Matriz de covarianza de la priori}: \( \Sigma = 0.01I \) podría ser demasiado restrictiva o mal escalada para los parámetros transformados logarítmicamente.
+\end{itemize}
+
+
+\end{solution}
+\end{document}
